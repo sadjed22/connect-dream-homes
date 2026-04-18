@@ -1,5 +1,5 @@
-import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const columns = [
   { title: "Plateforme", links: [
@@ -23,9 +23,7 @@ const Footer = () => (
     <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
       <div>
         <Link to="/" className="flex items-center gap-2 font-bold text-lg text-background mb-3">
-          <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary grid place-items-center">
-            <Home className="w-5 h-5" />
-          </span>
+          <img src={logo} alt="ImmoConnect logo" className="w-10 h-10 object-contain bg-background rounded-lg p-1" />
           ImmoConnect
         </Link>
         <p className="text-sm">La plateforme immobilière de confiance en Algérie.</p>
