@@ -20,10 +20,10 @@ const Hero = () => {
           🇩🇿 N°1 de l'immobilier en Algérie
         </span>
 
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.15] mb-6">
           Trouvez le bien idéal
           <br />
-          <span className="bg-gradient-to-r from-secondary to-primary-glow bg-clip-text text-transparent">
+          <span className="inline-block pb-2 bg-gradient-to-r from-secondary to-primary-glow bg-clip-text text-transparent">
             en toute confiance
           </span>
         </h1>
