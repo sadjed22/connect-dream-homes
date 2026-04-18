@@ -33,8 +33,10 @@ const Header = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" size="sm">Se connecter</Button>
-          <Button size="sm" className="rounded-full bg-primary hover:bg-primary/90">S'inscrire</Button>
+          <Button variant="ghost" size="sm" asChild><Link to="/auth">Se connecter</Link></Button>
+          <Button size="sm" className="rounded-full bg-primary hover:bg-primary/90" asChild>
+            <Link to="/auth">S'inscrire</Link>
+          </Button>
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden p-2" aria-label="Menu">
@@ -51,8 +53,8 @@ const Header = () => {
               </li>
             ))}
             <li className="pt-2 flex gap-2">
-              <Button variant="outline" className="flex-1">Se connecter</Button>
-              <Button className="flex-1">S'inscrire</Button>
+              <Button variant="outline" className="flex-1" asChild><Link to="/auth" onClick={() => setOpen(false)}>Se connecter</Link></Button>
+              <Button className="flex-1" asChild><Link to="/auth" onClick={() => setOpen(false)}>S'inscrire</Link></Button>
             </li>
           </ul>
         </div>
