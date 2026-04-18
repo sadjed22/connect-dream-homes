@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 const links = [
   { label: "Accueil", to: "/" },
   { label: "Annonces", to: "/annonces" },
-  { label: "Services", to: "/#services" },
-  { label: "Contact", to: "/#contact" },
+  { label: "Services", to: "/services" },
+  { label: "Contact", to: "/contact" },
 ];
 
 const Header = () => {
