@@ -5,8 +5,8 @@ const columns = [
   { title: "Plateforme", links: [
     { label: "Annonces", to: "/annonces" },
     { label: "Services", to: "/services" },
-    { label: "Connexion", to: "/auth" },
-    { label: "Inscription", to: "/auth" },
+    { label: "Connexion", to: "/login" },
+    { label: "Inscription", to: "/signup" },
   ]},
   { title: "Entreprise", links: [
     { label: "À propos", to: "/about" },
