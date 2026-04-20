@@ -14,7 +14,7 @@ const CTA = () => (
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg" className="rounded-full bg-white text-primary hover:bg-white/90 font-semibold">
-              <Link to="/auth">Créer un compte</Link>
+              <Link to="/signup">Créer un compte</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white">
               <Link to="/annonces">Parcourir les annonces</Link>
