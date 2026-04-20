@@ -32,9 +32,9 @@ const Header = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild><Link to="/auth">Se connecter</Link></Button>
+          <Button variant="ghost" size="sm" asChild><Link to="/login">Se connecter</Link></Button>
           <Button size="sm" className="rounded-full bg-primary hover:bg-primary/90" asChild>
-            <Link to="/auth">S'inscrire</Link>
+            <Link to="/signup">S'inscrire</Link>
           </Button>
         </div>
 
@@ -52,8 +52,8 @@ const Header = () => {
               </li>
             ))}
             <li className="pt-2 flex gap-2">
-              <Button variant="outline" className="flex-1" asChild><Link to="/auth" onClick={() => setOpen(false)}>Se connecter</Link></Button>
-              <Button className="flex-1" asChild><Link to="/auth" onClick={() => setOpen(false)}>S'inscrire</Link></Button>
+              <Button variant="outline" className="flex-1" asChild><Link to="/login" onClick={() => setOpen(false)}>Se connecter</Link></Button>
+              <Button className="flex-1" asChild><Link to="/signup" onClick={() => setOpen(false)}>S'inscrire</Link></Button>
             </li>
           </ul>
         </div>
