@@ -81,12 +81,17 @@ const Signup = () => {
   const [rectoFile, setRectoFile] = useState<File | null>(null);
   const [versoFile, setVersoFile] = useState<File | null>(null);
 
+  const [files, setFiles] = useState<Record<string, File | null>>({});
+
+  const requiredDocs = profileType ? documentsByProfile[profileType] ?? [] : [];
+
   const handleStep1 = (e: FormEvent) => {
     e.preventDefault();
     if (!profileType) {
       toast({ title: "Sélectionnez un profil", variant: "destructive" });
       return;
     }
+    setFiles({});
     setStep(2);
   };
 
@@ -97,8 +102,9 @@ const Signup = () => {
 
   const handleFinalSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!rectoFile) {
-      toast({ title: "Recto du document requis", variant: "destructive" });
+    const missing = requiredDocs.find((d) => d.required && !files[d.id]);
+    if (missing) {
+      toast({ title: `Document requis : ${missing.label}`, variant: "destructive" });
       return;
     }
     setLoading(true);
