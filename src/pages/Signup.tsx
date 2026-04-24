@@ -79,6 +79,8 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const requiredDocs = profileType ? documentsByProfile[profileType] ?? [] : [];
 
@@ -94,6 +96,10 @@ const Signup = () => {
 
   const handleStep2 = (e: FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast({ title: "Les mots de passe ne correspondent pas", variant: "destructive" });
+      return;
+    }
     setStep(3);
   };
 
