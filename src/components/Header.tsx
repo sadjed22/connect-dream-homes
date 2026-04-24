@@ -1,12 +1,19 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logo from "@/assets/logo.png";
+import { CATEGORIES } from "@/data/explore";
 
 const links = [
   { label: "Accueil", to: "/" },
-  { label: "Annonces", to: "/annonces" },
   { label: "Services", to: "/services" },
   { label: "Contact", to: "/contact" },
 ];
@@ -22,7 +29,35 @@ const Header = () => {
         </Link>
 
         <ul className="hidden md:flex items-center gap-1">
-          {links.map((l) => (
+          <li>
+            <Link to="/" className="px-4 py-2 rounded-full text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors">
+              Accueil
+            </Link>
+          </li>
+          <li>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-4 py-2 rounded-full text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors inline-flex items-center gap-1 outline-none">
+                Explore <ChevronDown className="w-4 h-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64">
+                <DropdownMenuItem asChild>
+                  <Link to="/explore" className="cursor-pointer font-medium">
+                    Toutes les offres
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {CATEGORIES.map((c) => (
+                  <DropdownMenuItem key={c.value} asChild>
+                    <Link to={`/explore?cat=${c.value}`} className="cursor-pointer flex flex-col items-start gap-0.5 py-2">
+                      <span className="font-medium">{c.label}</span>
+                      <span className="text-xs text-muted-foreground">{c.description}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </li>
+          {links.slice(1).map((l) => (
             <li key={l.label}>
               <Link to={l.to} className="px-4 py-2 rounded-full text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted transition-colors">
                 {l.label}
@@ -46,7 +81,26 @@ const Header = () => {
       {open && (
         <div className="md:hidden border-t border-border bg-background">
           <ul className="container mx-auto px-4 py-4 space-y-1">
-            {links.map((l) => (
+            <li>
+              <Link to="/" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-muted">Accueil</Link>
+            </li>
+            <li className="pt-2">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Explore</p>
+              <Link to="/explore" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-muted font-medium">
+                Toutes les offres
+              </Link>
+              {CATEGORIES.map((c) => (
+                <Link
+                  key={c.value}
+                  to={`/explore?cat=${c.value}`}
+                  onClick={() => setOpen(false)}
+                  className="block px-3 py-2 rounded-lg hover:bg-muted text-sm"
+                >
+                  {c.label}
+                </Link>
+              ))}
+            </li>
+            {links.slice(1).map((l) => (
               <li key={l.label}>
                 <Link to={l.to} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-muted">{l.label}</Link>
               </li>
