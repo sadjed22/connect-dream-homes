@@ -260,28 +260,24 @@ const Signup = () => {
                   <div className="flex gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
                     <FileCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold text-sm">Documents acceptés</p>
+                      <p className="font-semibold text-sm">Documents requis pour votre profil</p>
                       <p className="text-xs text-muted-foreground">
-                        Carte d'identité nationale, Passeport, Permis de conduire
+                        Formats acceptés : JPG, PNG ou PDF — max 5 Mo par fichier
                       </p>
                     </div>
                   </div>
 
-                  <FileUploadField
-                    id="recto"
-                    label="Recto du document"
-                    required
-                    file={rectoFile}
-                    onFileChange={setRectoFile}
-                  />
-
-                  <FileUploadField
-                    id="verso"
-                    label="Verso du document"
-                    optional
-                    file={versoFile}
-                    onFileChange={setVersoFile}
-                  />
+                  {requiredDocs.map((doc) => (
+                    <FileUploadField
+                      key={doc.id}
+                      id={doc.id}
+                      label={doc.label}
+                      required={doc.required}
+                      optional={!doc.required}
+                      file={files[doc.id] ?? null}
+                      onFileChange={(f) => setFiles((prev) => ({ ...prev, [doc.id]: f }))}
+                    />
+                  ))}
 
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1">
