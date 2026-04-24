@@ -78,9 +78,6 @@ const Signup = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rectoFile, setRectoFile] = useState<File | null>(null);
-  const [versoFile, setVersoFile] = useState<File | null>(null);
-
   const [files, setFiles] = useState<Record<string, File | null>>({});
 
   const requiredDocs = profileType ? documentsByProfile[profileType] ?? [] : [];
