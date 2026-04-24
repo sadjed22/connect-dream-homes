@@ -1,11 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, MapPin, BadgeCheck } from "lucide-react";
+import { Search, MapPin, BadgeCheck, User, Phone, Mail, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, EXPLORE_ITEMS, type ExploreCategory } from "@/data/explore";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { CATEGORIES, EXPLORE_ITEMS, type ExploreCategory, type ExploreItem } from "@/data/explore";
 import { cn } from "@/lib/utils";
 
 const ALL = "all";
@@ -14,6 +21,7 @@ const Explore = () => {
   const [params, setParams] = useSearchParams();
   const active = (params.get("cat") || ALL) as ExploreCategory | "all";
   const [q, setQ] = useState("");
+  const [selected, setSelected] = useState<ExploreItem | null>(null);
 
   const setCat = (cat: string) => {
     const merged = new URLSearchParams(params);
@@ -110,6 +118,8 @@ const Explore = () => {
                       src={i.image}
                       alt={i.title}
                       loading="lazy"
+                      width={768}
+                      height={576}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground capitalize">
@@ -136,7 +146,9 @@ const Explore = () => {
                       ) : (
                         <span />
                       )}
-                      <Button size="sm" variant="outline" className="rounded-full">Voir</Button>
+                      <Button size="sm" variant="outline" className="rounded-full" onClick={() => setSelected(i)}>
+                        Voir
+                      </Button>
                     </div>
                   </div>
                 </article>
@@ -146,6 +158,95 @@ const Explore = () => {
         </div>
       </main>
       <Footer />
+
+      {/* Detail dialog */}
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+          {selected && (
+            <>
+              <div className="relative aspect-[16/9] bg-muted">
+                <img
+                  src={selected.image}
+                  alt={selected.title}
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
+                  {CATEGORIES.find((c) => c.value === selected.category)?.label}
+                </span>
+                {selected.badge && (
+                  <span className="absolute top-3 right-12 px-2.5 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground inline-flex items-center gap-1">
+                    <BadgeCheck className="w-3 h-3" /> {selected.badge}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-6 space-y-5">
+                <DialogHeader className="space-y-1 text-left">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">{selected.subtitle}</p>
+                  <DialogTitle className="text-2xl">{selected.title}</DialogTitle>
+                  <DialogDescription className="inline-flex items-center gap-1 text-sm">
+                    <MapPin className="w-4 h-4" /> {selected.location}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {selected.price && (
+                  <div className="text-2xl font-bold text-primary">{selected.price}</div>
+                )}
+
+                <p className="text-sm text-foreground/80 leading-relaxed">{selected.description}</p>
+
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                    Détails
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {selected.details.map((d) => (
+                      <div key={d.label} className="flex flex-col p-3 rounded-lg bg-muted/40 border border-border">
+                        <span className="text-xs text-muted-foreground">{d.label}</span>
+                        <span className="text-sm font-medium">{d.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-border p-4 bg-muted/20">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                    Auteur de l'offre
+                  </h4>
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold">{selected.author.name}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{selected.author.role}</p>
+                      <div className="space-y-1 text-sm">
+                        <a href={`tel:${selected.author.phone}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary">
+                          <Phone className="w-4 h-4" /> {selected.author.phone}
+                        </a>
+                        <a href={`mailto:${selected.author.email}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary break-all">
+                          <Mail className="w-4 h-4" /> {selected.author.email}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button variant="outline" className="flex-1" onClick={() => setSelected(null)}>
+                    <X className="w-4 h-4 mr-1" /> Fermer
+                  </Button>
+                  <Button className="flex-1" asChild>
+                    <a href={`mailto:${selected.author.email}`}>
+                      <Mail className="w-4 h-4 mr-1" /> Contacter
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
