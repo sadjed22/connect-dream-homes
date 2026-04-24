@@ -28,13 +28,48 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import Stepper from "@/components/auth/Stepper";
 
 const profileTypes = [
-  { id: "promoteur", label: "Promoteur / Entreprise BTP", icon: Building2 },
-  { id: "architecte", label: "Architecte / Ingénieur", icon: Compass },
+  { id: "particulier", label: "Particulier", icon: User },
+  { id: "agent", label: "Agent immobilier", icon: MapPin },
+  { id: "promoteur", label: "Promoteur immobilier", icon: Building2 },
   { id: "notaire", label: "Notaire", icon: Scale },
-  { id: "investisseur", label: "Investisseur", icon: TrendingUp },
-  { id: "acheteur", label: "Acheteur particulier", icon: User },
-  { id: "proprietaire", label: "Propriétaire de terrain", icon: MapPin },
+  { id: "architecte", label: "Architecte / Ingénieur", icon: Compass },
+  { id: "expert", label: "Expert immobilier", icon: TrendingUp },
 ];
+
+type DocItem = { id: string; label: string; required: boolean };
+
+const documentsByProfile: Record<string, DocItem[]> = {
+  particulier: [
+    { id: "cni", label: "Carte d'identité nationale (CNI)", required: true },
+  ],
+  agent: [
+    { id: "agrement", label: "Carte d'agent immobilier (agrément)", required: true },
+    { id: "rc", label: "Registre de commerce (RC)", required: true },
+    { id: "nif", label: "Numéro d'identification fiscale (NIF)", required: true },
+  ],
+  promoteur: [
+    { id: "cni", label: "Carte d'identité nationale (CNI)", required: true },
+    { id: "rc", label: "Registre de commerce", required: true },
+    { id: "nif", label: "Numéro d'identification fiscale (NIF)", required: true },
+    { id: "statuts", label: "Statuts de l'entreprise", required: true },
+    { id: "autorisation", label: "Autorisation de projet immobilier", required: false },
+  ],
+  notaire: [
+    { id: "arrete", label: "Arrêté de nomination (ministère de la Justice)", required: true },
+    { id: "carte-pro", label: "Carte professionnelle de notaire", required: true },
+  ],
+  architecte: [
+    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
+    { id: "diplome", label: "Diplôme d'architecte ou d'ingénieur", required: true },
+    { id: "cv", label: "CV professionnel", required: true },
+  ],
+  expert: [
+    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
+    { id: "diplome", label: "Diplôme (immobilier, économie, gestion, etc.)", required: true },
+    { id: "attestation", label: "Attestation d'expertise immobilière", required: true },
+    { id: "experience", label: "Justificatif d'expérience", required: true },
+  ],
+};
 
 const Signup = () => {
   const navigate = useNavigate();
