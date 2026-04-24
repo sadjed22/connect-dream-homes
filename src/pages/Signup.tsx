@@ -28,13 +28,48 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import Stepper from "@/components/auth/Stepper";
 
 const profileTypes = [
-  { id: "promoteur", label: "Promoteur / Entreprise BTP", icon: Building2 },
-  { id: "architecte", label: "Architecte / Ingénieur", icon: Compass },
+  { id: "particulier", label: "Particulier", icon: User },
+  { id: "agent", label: "Agent immobilier", icon: MapPin },
+  { id: "promoteur", label: "Promoteur immobilier", icon: Building2 },
   { id: "notaire", label: "Notaire", icon: Scale },
-  { id: "investisseur", label: "Investisseur", icon: TrendingUp },
-  { id: "acheteur", label: "Acheteur particulier", icon: User },
-  { id: "proprietaire", label: "Propriétaire de terrain", icon: MapPin },
+  { id: "architecte", label: "Architecte / Ingénieur", icon: Compass },
+  { id: "expert", label: "Expert immobilier", icon: TrendingUp },
 ];
+
+type DocItem = { id: string; label: string; required: boolean };
+
+const documentsByProfile: Record<string, DocItem[]> = {
+  particulier: [
+    { id: "cni", label: "Carte d'identité nationale (CNI)", required: true },
+  ],
+  agent: [
+    { id: "agrement", label: "Carte d'agent immobilier (agrément)", required: true },
+    { id: "rc", label: "Registre de commerce (RC)", required: true },
+    { id: "nif", label: "Numéro d'identification fiscale (NIF)", required: true },
+  ],
+  promoteur: [
+    { id: "cni", label: "Carte d'identité nationale (CNI)", required: true },
+    { id: "rc", label: "Registre de commerce", required: true },
+    { id: "nif", label: "Numéro d'identification fiscale (NIF)", required: true },
+    { id: "statuts", label: "Statuts de l'entreprise", required: true },
+    { id: "autorisation", label: "Autorisation de projet immobilier", required: false },
+  ],
+  notaire: [
+    { id: "arrete", label: "Arrêté de nomination (ministère de la Justice)", required: true },
+    { id: "carte-pro", label: "Carte professionnelle de notaire", required: true },
+  ],
+  architecte: [
+    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
+    { id: "diplome", label: "Diplôme d'architecte ou d'ingénieur", required: true },
+    { id: "cv", label: "CV professionnel", required: true },
+  ],
+  expert: [
+    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
+    { id: "diplome", label: "Diplôme (immobilier, économie, gestion, etc.)", required: true },
+    { id: "attestation", label: "Attestation d'expertise immobilière", required: true },
+    { id: "experience", label: "Justificatif d'expérience", required: true },
+  ],
+};
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -43,8 +78,9 @@ const Signup = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rectoFile, setRectoFile] = useState<File | null>(null);
-  const [versoFile, setVersoFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<Record<string, File | null>>({});
+
+  const requiredDocs = profileType ? documentsByProfile[profileType] ?? [] : [];
 
   const handleStep1 = (e: FormEvent) => {
     e.preventDefault();
@@ -52,6 +88,7 @@ const Signup = () => {
       toast({ title: "Sélectionnez un profil", variant: "destructive" });
       return;
     }
+    setFiles({});
     setStep(2);
   };
 
@@ -62,8 +99,9 @@ const Signup = () => {
 
   const handleFinalSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!rectoFile) {
-      toast({ title: "Recto du document requis", variant: "destructive" });
+    const missing = requiredDocs.find((d) => d.required && !files[d.id]);
+    if (missing) {
+      toast({ title: `Document requis : ${missing.label}`, variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -222,28 +260,24 @@ const Signup = () => {
                   <div className="flex gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5">
                     <FileCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-semibold text-sm">Documents acceptés</p>
+                      <p className="font-semibold text-sm">Documents requis pour votre profil</p>
                       <p className="text-xs text-muted-foreground">
-                        Carte d'identité nationale, Passeport, Permis de conduire
+                        Formats acceptés : JPG, PNG ou PDF — max 5 Mo par fichier
                       </p>
                     </div>
                   </div>
 
-                  <FileUploadField
-                    id="recto"
-                    label="Recto du document"
-                    required
-                    file={rectoFile}
-                    onFileChange={setRectoFile}
-                  />
-
-                  <FileUploadField
-                    id="verso"
-                    label="Verso du document"
-                    optional
-                    file={versoFile}
-                    onFileChange={setVersoFile}
-                  />
+                  {requiredDocs.map((doc) => (
+                    <FileUploadField
+                      key={doc.id}
+                      id={doc.id}
+                      label={doc.label}
+                      required={doc.required}
+                      optional={!doc.required}
+                      file={files[doc.id] ?? null}
+                      onFileChange={(f) => setFiles((prev) => ({ ...prev, [doc.id]: f }))}
+                    />
+                  ))}
 
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1">
