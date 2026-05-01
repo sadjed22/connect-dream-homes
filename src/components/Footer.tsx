@@ -23,8 +23,8 @@ const Footer = () => (
     <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
       <div>
         <Link to="/" className="flex items-center gap-2 font-bold text-lg text-background mb-3">
-          <img src={logo} alt="ImmoConnect logo" className="w-10 h-10 object-contain bg-background rounded-lg p-1" />
-          ImmoConnect
+          <img src={logo} alt="ImmoMatch logo" className="w-10 h-10 object-contain bg-background rounded-lg p-1" />
+          ImmoMatch
         </Link>
         <p className="text-sm">La plateforme immobilière de confiance en Algérie.</p>
       </div>
@@ -42,7 +42,7 @@ const Footer = () => (
       ))}
     </div>
     <div className="container mx-auto px-4 mt-10 pt-6 border-t border-background/10 text-sm text-center">
-      © {new Date().getFullYear()} ImmoConnect. Tous droits réservés.
+      © {new Date().getFullYear()} ImmoMatch. Tous droits réservés.
     </div>
   </footer>
 );

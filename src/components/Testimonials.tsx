@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 const items = [
   { name: "Karim B.", role: "Acquéreur", quote: "J'ai trouvé mon appartement en 2 semaines grâce au matching intelligent. Service impeccable !" },
   { name: "Amina S.", role: "Propriétaire", quote: "La vérification des documents m'a rassurée. Transaction rapide et sécurisée." },
-  { name: "Yacine M.", role: "Agent immobilier", quote: "ImmoConnect m'a permis de connecter avec des clients qualifiés. Très professionnel." },
+  { name: "Yacine M.", role: "Agent immobilier", quote: "ImmoMatch m'a permis de connecter avec des clients qualifiés. Très professionnel." },
 ];
 
 const Testimonials = () => (

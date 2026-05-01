@@ -41,7 +41,7 @@ const Login = () => {
       <Card className="w-full max-w-md shadow-xl border-border/50">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl">Bon retour !</CardTitle>
-          <CardDescription>Connectez-vous à votre compte ImmoConnect</CardDescription>
+          <CardDescription>Connectez-vous à votre compte ImmoMatch</CardDescription>
         </CardHeader>
 
         <CardContent>
