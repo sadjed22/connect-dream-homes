@@ -10,7 +10,7 @@ const CTA = () => (
         <div className="relative">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">Prêt à trouver votre bien idéal ?</h2>
           <p className="max-w-xl mx-auto text-white/85 text-lg mb-8">
-            Rejoignez des milliers d'utilisateurs qui font confiance à ImmoConnect pour leurs projets immobiliers.
+            Rejoignez des milliers d'utilisateurs qui font confiance à ImmoMatch pour leurs projets immobiliers.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild size="lg" className="rounded-full bg-white text-primary hover:bg-white/90 font-semibold">

@@ -20,7 +20,7 @@ const Services = () => (
       <section className="container mx-auto px-4 py-16 text-center max-w-3xl">
         <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wider uppercase mb-4">Nos services</span>
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5">Tout ce qu'il faut pour réussir votre projet immobilier</h1>
-        <p className="text-muted-foreground text-lg">De la recherche au passage chez le notaire, ImmoConnect vous accompagne avec des outils modernes et un réseau de confiance.</p>
+        <p className="text-muted-foreground text-lg">De la recherche au passage chez le notaire, ImmoMatch vous accompagne avec des outils modernes et un réseau de confiance.</p>
       </section>
 
       <section className="container mx-auto px-4 pb-20">

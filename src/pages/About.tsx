@@ -18,7 +18,7 @@ const About = () => (
       <section className="container mx-auto px-4 py-16 text-center max-w-3xl">
         <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wider uppercase mb-4">À propos</span>
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5">Construire la confiance dans l'immobilier algérien</h1>
-        <p className="text-muted-foreground text-lg">ImmoConnect est née d'une conviction : trouver ou vendre un bien ne devrait jamais être un parcours du combattant.</p>
+        <p className="text-muted-foreground text-lg">ImmoMatch est née d'une conviction : trouver ou vendre un bien ne devrait jamais être un parcours du combattant.</p>
       </section>
 
       <section className="container mx-auto px-4 pb-20 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
