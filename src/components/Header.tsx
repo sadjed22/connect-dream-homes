@@ -25,7 +25,7 @@ const Header = () => {
       <nav className="container mx-auto flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
           <img src={logo} alt="ImmoMatch logo" className="w-10 h-10 object-contain" />
-          <span>Immo<span className="text-secondary">Match</span></span>
+          <span>Immo<span className="text-primary">Match</span></span>
         </Link>
 
         <ul className="hidden md:flex items-center gap-1">
