@@ -46,10 +46,8 @@ export interface ExploreItem {
 export const CATEGORIES: { value: ExploreCategory; label: string; description: string }[] = [
   { value: "acheter", label: "Acheter", description: "Biens à la vente" },
   { value: "louer", label: "Louer", description: "Locations disponibles" },
-  { value: "projets", label: "Projets en cours", description: "Constructions et chantiers" },
   { value: "agences", label: "Agences immobilières", description: "Trouver une agence" },
   { value: "promoteurs", label: "Promoteurs", description: "Promoteurs immobiliers" },
-  { value: "emplois", label: "Emplois", description: "Offres dans l'immobilier" },
 ];
 
 export const EXPLORE_ITEMS: ExploreItem[] = [
