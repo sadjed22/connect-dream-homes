@@ -6,10 +6,6 @@ import l1 from "@/assets/explore/l1.jpg";
 import l2 from "@/assets/explore/l2.jpg";
 import l3 from "@/assets/explore/l3.jpg";
 import l4 from "@/assets/explore/l4.jpg";
-import p1 from "@/assets/explore/p1.jpg";
-import p2 from "@/assets/explore/p2.jpg";
-import p3 from "@/assets/explore/p3.jpg";
-import p4 from "@/assets/explore/p4.jpg";
 import ag1 from "@/assets/explore/ag1.jpg";
 import ag2 from "@/assets/explore/ag2.jpg";
 import ag3 from "@/assets/explore/ag3.jpg";
@@ -18,18 +14,12 @@ import pr1 from "@/assets/explore/pr1.jpg";
 import pr2 from "@/assets/explore/pr2.jpg";
 import pr3 from "@/assets/explore/pr3.jpg";
 import pr4 from "@/assets/explore/pr4.jpg";
-import e1 from "@/assets/explore/e1.jpg";
-import e2 from "@/assets/explore/e2.jpg";
-import e3 from "@/assets/explore/e3.jpg";
-import e4 from "@/assets/explore/e4.jpg";
 
 export type ExploreCategory =
   | "acheter"
   | "louer"
-  | "projets"
   | "agences"
-  | "promoteurs"
-  | "emplois";
+  | "promoteurs";
 
 export interface Author {
   name: string;
