@@ -6,10 +6,6 @@ import l1 from "@/assets/explore/l1.jpg";
 import l2 from "@/assets/explore/l2.jpg";
 import l3 from "@/assets/explore/l3.jpg";
 import l4 from "@/assets/explore/l4.jpg";
-import p1 from "@/assets/explore/p1.jpg";
-import p2 from "@/assets/explore/p2.jpg";
-import p3 from "@/assets/explore/p3.jpg";
-import p4 from "@/assets/explore/p4.jpg";
 import ag1 from "@/assets/explore/ag1.jpg";
 import ag2 from "@/assets/explore/ag2.jpg";
 import ag3 from "@/assets/explore/ag3.jpg";
@@ -18,18 +14,12 @@ import pr1 from "@/assets/explore/pr1.jpg";
 import pr2 from "@/assets/explore/pr2.jpg";
 import pr3 from "@/assets/explore/pr3.jpg";
 import pr4 from "@/assets/explore/pr4.jpg";
-import e1 from "@/assets/explore/e1.jpg";
-import e2 from "@/assets/explore/e2.jpg";
-import e3 from "@/assets/explore/e3.jpg";
-import e4 from "@/assets/explore/e4.jpg";
 
 export type ExploreCategory =
   | "acheter"
   | "louer"
-  | "projets"
   | "agences"
-  | "promoteurs"
-  | "emplois";
+  | "promoteurs";
 
 export interface Author {
   name: string;
@@ -56,10 +46,8 @@ export interface ExploreItem {
 export const CATEGORIES: { value: ExploreCategory; label: string; description: string }[] = [
   { value: "acheter", label: "Acheter", description: "Biens à la vente" },
   { value: "louer", label: "Louer", description: "Locations disponibles" },
-  { value: "projets", label: "Projets en cours", description: "Constructions et chantiers" },
   { value: "agences", label: "Agences immobilières", description: "Trouver une agence" },
   { value: "promoteurs", label: "Promoteurs", description: "Promoteurs immobiliers" },
-  { value: "emplois", label: "Emplois", description: "Offres dans l'immobilier" },
 ];
 
 export const EXPLORE_ITEMS: ExploreItem[] = [
@@ -165,56 +153,6 @@ export const EXPLORE_ITEMS: ExploreItem[] = [
     author: { name: "Oran Properties", role: "Agence immobilière", phone: "+213 41 22 33 44", email: "contact@oranprop.dz" },
   },
 
-  // ===== Projets =====
-  {
-    id: "p1", category: "projets", title: "Résidence Les Oliviers", subtitle: "120 logements LSP",
-    location: "Bouinan, Blida", meta: "Livraison 2026", badge: "En cours", image: p1,
-    description: "Programme de 120 logements LSP avec espaces verts, aires de jeux, parkings et commerces de proximité.",
-    details: [
-      { label: "Logements", value: "120" },
-      { label: "Type", value: "LSP" },
-      { label: "Avancement", value: "55%" },
-      { label: "Livraison", value: "Q2 2026" },
-    ],
-    author: { name: "Promobat", role: "Promoteur immobilier", phone: "+213 25 11 22 33", email: "projets@promobat.dz" },
-  },
-  {
-    id: "p2", category: "projets", title: "Tour Business Bay", subtitle: "Complexe commercial",
-    location: "Bab Ezzouar, Alger", meta: "20 étages • Livraison 2027", badge: "En cours", image: p2,
-    description: "Tour de 20 étages mixant bureaux, espaces commerciaux et restaurants au cœur du nouveau pôle d'affaires.",
-    details: [
-      { label: "Étages", value: "20" },
-      { label: "Surface", value: "45 000 m²" },
-      { label: "Avancement", value: "30%" },
-      { label: "Livraison", value: "Q4 2027" },
-    ],
-    author: { name: "Groupe DAHLI", role: "Promoteur immobilier", phone: "+213 21 77 88 99", email: "info@dahli.dz" },
-  },
-  {
-    id: "p3", category: "projets", title: "Eco-quartier El Bahia", subtitle: "Lotissement écologique",
-    location: "Oran", meta: "85 villas • Livraison 2025", badge: "En cours", image: p3,
-    description: "Quartier écologique avec villas équipées de panneaux solaires, récupération d'eau, et espaces verts partagés.",
-    details: [
-      { label: "Villas", value: "85" },
-      { label: "Surface lots", value: "300-500 m²" },
-      { label: "Avancement", value: "75%" },
-      { label: "Livraison", value: "Q4 2025" },
-    ],
-    author: { name: "Cosider Promotion", role: "Promoteur immobilier", phone: "+213 21 23 45 67", email: "contact@cosider.dz" },
-  },
-  {
-    id: "p4", category: "projets", title: "Résidence Marina View", subtitle: "Appartements front de mer",
-    location: "Béjaïa", meta: "60 lots • Livraison 2026", image: p4,
-    description: "Résidence de standing en bord de mer avec piscine, salle de sport et accès direct à la marina.",
-    details: [
-      { label: "Logements", value: "60" },
-      { label: "Vue", value: "Mer" },
-      { label: "Avancement", value: "40%" },
-      { label: "Livraison", value: "Q3 2026" },
-    ],
-    author: { name: "El Hadi Construction", role: "Promoteur immobilier", phone: "+213 34 55 66 77", email: "elhadi@construction.dz" },
-  },
-
   // ===== Agences =====
   {
     id: "ag1", category: "agences", title: "Algéria Immo", subtitle: "Agence immobilière",
@@ -313,55 +251,5 @@ export const EXPLORE_ITEMS: ExploreItem[] = [
       { label: "Logements livrés", value: "1 100+" },
     ],
     author: { name: "El Hadi Construction", role: "Promoteur immobilier", phone: "+213 34 55 66 77", email: "elhadi@construction.dz" },
-  },
-
-  // ===== Emplois =====
-  {
-    id: "e1", category: "emplois", title: "Agent immobilier confirmé", subtitle: "CDI • Temps plein",
-    location: "Alger", meta: "Algéria Immo", price: "60 000 - 90 000 DA", image: e1,
-    description: "Recherche agent immobilier confirmé avec portefeuille clients, pour rejoindre notre équipe d'Alger Centre.",
-    details: [
-      { label: "Contrat", value: "CDI" },
-      { label: "Expérience", value: "3 ans minimum" },
-      { label: "Permis", value: "B requis" },
-      { label: "Commissions", value: "Attractives" },
-    ],
-    author: { name: "Algéria Immo", role: "Recruteur", phone: "+213 21 45 67 89", email: "rh@algeriaimmo.dz" },
-  },
-  {
-    id: "e2", category: "emplois", title: "Architecte junior", subtitle: "CDI • Temps plein",
-    location: "Oran", meta: "Cabinet Bensalem", price: "70 000 - 100 000 DA", image: e2,
-    description: "Cabinet d'architecture recherche un(e) architecte junior maîtrisant AutoCAD, Revit et SketchUp.",
-    details: [
-      { label: "Contrat", value: "CDI" },
-      { label: "Expérience", value: "0-2 ans" },
-      { label: "Diplôme", value: "Architecte DPLG" },
-      { label: "Logiciels", value: "AutoCAD, Revit" },
-    ],
-    author: { name: "Cabinet Bensalem", role: "Recruteur", phone: "+213 41 33 44 55", email: "rh@bensalem-archi.dz" },
-  },
-  {
-    id: "e3", category: "emplois", title: "Conducteur de travaux", subtitle: "CDI • Chantier",
-    location: "Blida", meta: "Cosider Promotion", price: "80 000 - 120 000 DA", image: e3,
-    description: "Conducteur de travaux pour piloter un chantier de 120 logements à Bouinan. Encadrement d'équipes.",
-    details: [
-      { label: "Contrat", value: "CDI" },
-      { label: "Expérience", value: "5 ans minimum" },
-      { label: "Diplôme", value: "Ingénieur génie civil" },
-      { label: "Voiture", value: "Fournie" },
-    ],
-    author: { name: "Cosider Promotion", role: "Recruteur", phone: "+213 25 11 22 33", email: "rh@cosider.dz" },
-  },
-  {
-    id: "e4", category: "emplois", title: "Négociateur immobilier", subtitle: "Freelance / Commission",
-    location: "Constantine", meta: "Constantine Habitat", image: e4,
-    description: "Négociateur indépendant rémunéré à la commission. Liberté d'organisation, formation assurée.",
-    details: [
-      { label: "Statut", value: "Indépendant" },
-      { label: "Expérience", value: "Débutant accepté" },
-      { label: "Formation", value: "Fournie" },
-      { label: "Commission", value: "Jusqu'à 50%" },
-    ],
-    author: { name: "Constantine Habitat", role: "Recruteur", phone: "+213 31 55 22 33", email: "rh@constantinehabitat.dz" },
   },
 ];
