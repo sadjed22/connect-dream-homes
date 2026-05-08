@@ -153,56 +153,6 @@ export const EXPLORE_ITEMS: ExploreItem[] = [
     author: { name: "Oran Properties", role: "Agence immobilière", phone: "+213 41 22 33 44", email: "contact@oranprop.dz" },
   },
 
-  // ===== Projets =====
-  {
-    id: "p1", category: "projets", title: "Résidence Les Oliviers", subtitle: "120 logements LSP",
-    location: "Bouinan, Blida", meta: "Livraison 2026", badge: "En cours", image: p1,
-    description: "Programme de 120 logements LSP avec espaces verts, aires de jeux, parkings et commerces de proximité.",
-    details: [
-      { label: "Logements", value: "120" },
-      { label: "Type", value: "LSP" },
-      { label: "Avancement", value: "55%" },
-      { label: "Livraison", value: "Q2 2026" },
-    ],
-    author: { name: "Promobat", role: "Promoteur immobilier", phone: "+213 25 11 22 33", email: "projets@promobat.dz" },
-  },
-  {
-    id: "p2", category: "projets", title: "Tour Business Bay", subtitle: "Complexe commercial",
-    location: "Bab Ezzouar, Alger", meta: "20 étages • Livraison 2027", badge: "En cours", image: p2,
-    description: "Tour de 20 étages mixant bureaux, espaces commerciaux et restaurants au cœur du nouveau pôle d'affaires.",
-    details: [
-      { label: "Étages", value: "20" },
-      { label: "Surface", value: "45 000 m²" },
-      { label: "Avancement", value: "30%" },
-      { label: "Livraison", value: "Q4 2027" },
-    ],
-    author: { name: "Groupe DAHLI", role: "Promoteur immobilier", phone: "+213 21 77 88 99", email: "info@dahli.dz" },
-  },
-  {
-    id: "p3", category: "projets", title: "Eco-quartier El Bahia", subtitle: "Lotissement écologique",
-    location: "Oran", meta: "85 villas • Livraison 2025", badge: "En cours", image: p3,
-    description: "Quartier écologique avec villas équipées de panneaux solaires, récupération d'eau, et espaces verts partagés.",
-    details: [
-      { label: "Villas", value: "85" },
-      { label: "Surface lots", value: "300-500 m²" },
-      { label: "Avancement", value: "75%" },
-      { label: "Livraison", value: "Q4 2025" },
-    ],
-    author: { name: "Cosider Promotion", role: "Promoteur immobilier", phone: "+213 21 23 45 67", email: "contact@cosider.dz" },
-  },
-  {
-    id: "p4", category: "projets", title: "Résidence Marina View", subtitle: "Appartements front de mer",
-    location: "Béjaïa", meta: "60 lots • Livraison 2026", image: p4,
-    description: "Résidence de standing en bord de mer avec piscine, salle de sport et accès direct à la marina.",
-    details: [
-      { label: "Logements", value: "60" },
-      { label: "Vue", value: "Mer" },
-      { label: "Avancement", value: "40%" },
-      { label: "Livraison", value: "Q3 2026" },
-    ],
-    author: { name: "El Hadi Construction", role: "Promoteur immobilier", phone: "+213 34 55 66 77", email: "elhadi@construction.dz" },
-  },
-
   // ===== Agences =====
   {
     id: "ag1", category: "agences", title: "Algéria Immo", subtitle: "Agence immobilière",
