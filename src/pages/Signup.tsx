@@ -2,9 +2,7 @@ import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Building2,
-  Compass,
   Scale,
-  TrendingUp,
   User,
   MapPin,
   Mail,
@@ -23,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Stepper from "@/components/auth/Stepper";
@@ -66,6 +65,12 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<Record<string, File | null>>({});
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -90,22 +95,68 @@ const Signup = () => {
     setStep(3);
   };
 
-  const handleFinalSubmit = (e: FormEvent) => {
+  const handleFinalSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const missing = requiredDocs.find((d) => d.required && !files[d.id]);
     if (missing) {
       toast({ title: `Document requis : ${missing.label}`, variant: "destructive" });
       return;
     }
+
     setLoading(true);
-    setTimeout(() => {
+
+    const redirectUrl = `${window.location.origin}/`;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          phone,
+          location,
+          profile_type: profileType,
+        },
+      },
+    });
+
+    if (error) {
       setLoading(false);
       toast({
-        title: "Compte créé (démo)",
-        description: "L'authentification réelle nécessite Lovable Cloud.",
+        title: "Échec de l'inscription",
+        description: error.message.includes("already registered") || error.message.includes("already been registered")
+          ? "Un compte existe déjà avec cet email."
+          : error.message,
+        variant: "destructive",
       });
-      navigate("/login");
-    }, 900);
+      return;
+    }
+
+    const userId = data.user?.id;
+
+    // Upload documents to private bucket under userId/
+    if (userId) {
+      for (const doc of requiredDocs) {
+        const file = files[doc.id];
+        if (!file) continue;
+        const ext = file.name.split(".").pop();
+        const path = `${userId}/${doc.id}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("kyc-documents")
+          .upload(path, file, { upsert: true });
+        if (upErr) {
+          console.error("Upload error", doc.id, upErr);
+        }
+      }
+    }
+
+    setLoading(false);
+    toast({
+      title: "Compte créé avec succès",
+      description: "Bienvenue sur ImmoMatch !",
+    });
+    navigate("/");
   };
 
   return (
@@ -169,12 +220,25 @@ const Signup = () => {
                       <Label htmlFor="firstname">Prénom</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input id="firstname" placeholder="Amine" required className="pl-10" />
+                        <Input
+                          id="firstname"
+                          placeholder="Amine"
+                          required
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="pl-10"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastname">Nom</Label>
-                      <Input id="lastname" placeholder="Benali" required />
+                      <Input
+                        id="lastname"
+                        placeholder="Benali"
+                        required
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
                     </div>
                   </div>
 
@@ -182,7 +246,15 @@ const Signup = () => {
                     <Label htmlFor="signup-email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input id="signup-email" type="email" placeholder="vous@exemple.com" required className="pl-10" />
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="vous@exemple.com"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                   </div>
 
@@ -190,7 +262,15 @@ const Signup = () => {
                     <Label htmlFor="phone">Téléphone</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input id="phone" type="tel" placeholder="+213 5XX XX XX XX" required className="pl-10" />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+213 5XX XX XX XX"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                   </div>
 
@@ -198,7 +278,14 @@ const Signup = () => {
                     <Label htmlFor="location">Lieu</Label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input id="location" placeholder="Ville, Wilaya" required className="pl-10" />
+                      <Input
+                        id="location"
+                        placeholder="Ville, Wilaya"
+                        required
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                   </div>
 
@@ -303,7 +390,7 @@ const Signup = () => {
                   ))}
 
                   <div className="flex gap-3 pt-2">
-                    <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1" disabled={loading}>
                       <ArrowLeft className="w-4 h-4" />
                       Retour
                     </Button>

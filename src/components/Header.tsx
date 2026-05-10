@@ -1,6 +1,6 @@
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User as UserIcon } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import logo from "@/assets/logo.png";
 import { CATEGORIES } from "@/data/explore";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const links = [
   { label: "Accueil", to: "/" },
@@ -20,6 +22,15 @@ const links = [
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({ title: "Déconnecté" });
+    navigate("/");
+  };
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
       <nav className="container mx-auto flex items-center justify-between h-16 px-4">
@@ -67,10 +78,29 @@ const Header = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild><Link to="/login">Se connecter</Link></Button>
-          <Button size="sm" className="rounded-full bg-primary hover:bg-primary/90" asChild>
-            <Link to="/signup">S'inscrire</Link>
-          </Button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <UserIcon className="w-4 h-4" />
+                  <span className="max-w-[160px] truncate">{user.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Se déconnecter
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild><Link to="/login">Se connecter</Link></Button>
+              <Button size="sm" className="rounded-full bg-primary hover:bg-primary/90" asChild>
+                <Link to="/signup">S'inscrire</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden p-2" aria-label="Menu">
@@ -106,8 +136,16 @@ const Header = () => {
               </li>
             ))}
             <li className="pt-2 flex gap-2">
-              <Button variant="outline" className="flex-1" asChild><Link to="/login" onClick={() => setOpen(false)}>Se connecter</Link></Button>
-              <Button className="flex-1" asChild><Link to="/signup" onClick={() => setOpen(false)}>S'inscrire</Link></Button>
+              {user ? (
+                <Button variant="outline" className="flex-1" onClick={() => { setOpen(false); handleSignOut(); }}>
+                  <LogOut className="w-4 h-4" /> Déconnexion
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" className="flex-1" asChild><Link to="/login" onClick={() => setOpen(false)}>Se connecter</Link></Button>
+                  <Button className="flex-1" asChild><Link to="/signup" onClick={() => setOpen(false)}>S'inscrire</Link></Button>
+                </>
+              )}
             </li>
           </ul>
         </div>
