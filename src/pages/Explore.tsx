@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, MapPin, BadgeCheck, User, Phone, Mail, X } from "lucide-react";
 import Header from "@/components/Header";
@@ -13,7 +13,28 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { CATEGORIES, EXPLORE_ITEMS, type ExploreCategory, type ExploreItem } from "@/data/explore";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+
+const PROFILE_TYPE_TO_CATEGORY: Record<string, ExploreCategory> = {
+  agent: "agences",
+  promoteur: "promoteurs",
+  notaire: "notaires",
+};
+
+const ROLE_LABEL: Record<ExploreCategory, string> = {
+  acheter: "Bien à vendre",
+  louer: "Bien à louer",
+  agences: "Agence immobilière",
+  promoteurs: "Promoteur immobilier",
+  notaires: "Notaire",
+};
+
+const PLACEHOLDER_IMG =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%231e3a8a'/><stop offset='100%' stop-color='%233b82f6'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g)'/><text x='50%' y='52%' font-family='system-ui,sans-serif' font-size='80' fill='white' text-anchor='middle' font-weight='700'>IM</text></svg>`
+  );
 
 const ALL = "all";
 
@@ -22,6 +43,51 @@ const Explore = () => {
   const active = (params.get("cat") || ALL) as ExploreCategory | "all";
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<ExploreItem | null>(null);
+  const [dbItems, setDbItems] = useState<ExploreItem[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, email, phone, location, profile_type, created_at")
+        .in("profile_type", ["agent", "promoteur", "notaire"])
+        .order("created_at", { ascending: false });
+
+      if (error || !data || cancelled) return;
+
+      const mapped: ExploreItem[] = data.map((p) => {
+        const cat = PROFILE_TYPE_TO_CATEGORY[p.profile_type ?? ""] ?? "agences";
+        const fullName = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.email || "Membre vérifié";
+        return {
+          id: `db-${p.id}`,
+          category: cat,
+          title: fullName,
+          subtitle: ROLE_LABEL[cat],
+          location: p.location || "Algérie",
+          meta: "Compte vérifié",
+          badge: "Vérifié",
+          image: PLACEHOLDER_IMG,
+          description: `${fullName} est inscrit·e sur ImmoMatch en tant que ${ROLE_LABEL[cat].toLowerCase()}. Contactez directement via les coordonnées ci-dessous.`,
+          details: [
+            { label: "Type de profil", value: ROLE_LABEL[cat] },
+            { label: "Localisation", value: p.location || "—" },
+            { label: "Membre depuis", value: new Date(p.created_at).toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) },
+            { label: "Statut", value: "Vérifié" },
+          ],
+          author: {
+            name: fullName,
+            role: ROLE_LABEL[cat],
+            phone: p.phone || "—",
+            email: p.email || "—",
+          },
+        };
+      });
+
+      setDbItems(mapped);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const setCat = (cat: string) => {
     const merged = new URLSearchParams(params);
@@ -32,12 +98,18 @@ const Explore = () => {
 
   const items = useMemo(() => {
     const search = q.toLowerCase().trim();
-    return EXPLORE_ITEMS.filter((i) => {
+    // Real DB profiles take precedence for agences/promoteurs/notaires;
+    // static items are kept for acheter/louer.
+    const staticFiltered = EXPLORE_ITEMS.filter(
+      (i) => i.category === "acheter" || i.category === "louer"
+    );
+    const all = [...dbItems, ...staticFiltered];
+    return all.filter((i) => {
       if (active !== ALL && i.category !== active) return false;
       if (search && !`${i.title} ${i.subtitle} ${i.location}`.toLowerCase().includes(search)) return false;
       return true;
     });
-  }, [active, q]);
+  }, [active, q, dbItems]);
 
   const activeLabel = active === ALL ? "Toutes les offres" : CATEGORIES.find((c) => c.value === active)?.label;
 
