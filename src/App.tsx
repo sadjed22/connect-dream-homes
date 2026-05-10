@@ -12,7 +12,9 @@ import Signup from "./pages/Signup.tsx";
 import Services from "./pages/Services.tsx";
 import Contact from "./pages/Contact.tsx";
 import About from "./pages/About.tsx";
+import CreateListing from "./pages/CreateListing.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import AddListingFab from "./components/AddListingFab";
 
 const queryClient = new QueryClient();
 
@@ -33,9 +35,11 @@ const App = () => (
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
+            <Route path="/annonces/nouvelle" element={<CreateListing />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <AddListingFab />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

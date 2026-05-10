@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      listings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          price: string | null
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          price?: string | null
+          title: string
+          type: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          price?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["listing_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -86,6 +125,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      listing_type: "vendre" | "louer" | "projet" | "notarial"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -214,6 +254,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      listing_type: ["vendre", "louer", "projet", "notarial"],
     },
   },
 } as const
