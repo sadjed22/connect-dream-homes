@@ -32,8 +32,6 @@ const profileTypes = [
   { id: "agent", label: "Agent immobilier", icon: MapPin },
   { id: "promoteur", label: "Promoteur immobilier", icon: Building2 },
   { id: "notaire", label: "Notaire", icon: Scale },
-  { id: "architecte", label: "Architecte / Ingénieur", icon: Compass },
-  { id: "expert", label: "Expert immobilier", icon: TrendingUp },
 ];
 
 type DocItem = { id: string; label: string; required: boolean };
@@ -57,17 +55,6 @@ const documentsByProfile: Record<string, DocItem[]> = {
   notaire: [
     { id: "arrete", label: "Arrêté de nomination (ministère de la Justice)", required: true },
     { id: "carte-pro", label: "Carte professionnelle de notaire", required: true },
-  ],
-  architecte: [
-    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
-    { id: "diplome", label: "Diplôme d'architecte ou d'ingénieur", required: true },
-    { id: "cv", label: "CV professionnel", required: true },
-  ],
-  expert: [
-    { id: "cni", label: "Carte nationale d'identité (CNI)", required: true },
-    { id: "diplome", label: "Diplôme (immobilier, économie, gestion, etc.)", required: true },
-    { id: "attestation", label: "Attestation d'expertise immobilière", required: true },
-    { id: "experience", label: "Justificatif d'expérience", required: true },
   ],
 };
 
