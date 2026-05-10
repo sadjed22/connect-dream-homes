@@ -19,7 +19,8 @@ export type ExploreCategory =
   | "acheter"
   | "louer"
   | "agences"
-  | "promoteurs";
+  | "promoteurs"
+  | "notaires";
 
 export interface Author {
   name: string;
@@ -48,6 +49,7 @@ export const CATEGORIES: { value: ExploreCategory; label: string; description: s
   { value: "louer", label: "Louer", description: "Locations disponibles" },
   { value: "agences", label: "Agences immobilières", description: "Trouver une agence" },
   { value: "promoteurs", label: "Promoteurs", description: "Promoteurs immobiliers" },
+  { value: "notaires", label: "Notaires", description: "Études notariales" },
 ];
 
 export const EXPLORE_ITEMS: ExploreItem[] = [
