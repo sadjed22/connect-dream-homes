@@ -10,7 +10,32 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { LISTINGS, WILAYAS, PROPERTY_TYPES, TRANSACTIONS } from "@/data/listings";
+import { LISTINGS as STATIC_LISTINGS, WILAYAS, PROPERTY_TYPES, TRANSACTIONS, type Listing } from "@/data/listings";
+import { supabase } from "@/integrations/supabase/client";
+import l1 from "@/assets/listing-1.jpg";
+import l2 from "@/assets/listing-2.jpg";
+import l3 from "@/assets/listing-3.jpg";
+
+const FALLBACK_IMAGES = [l1, l2, l3];
+
+const mapDbListing = (row: { id: string; title: string; type: string; location: string | null; price: string | null; image_url: string | null; created_at: string }, idx: number): Listing => {
+  const [city, wilayaRaw] = (row.location ?? "").split(",").map((s) => s.trim());
+  const wilaya = wilayaRaw || city || "Algérie";
+  const transaction: Listing["transaction"] = row.type === "louer" ? "location" : "vente";
+  return {
+    id: row.id,
+    title: row.title,
+    city: city || wilaya,
+    wilaya,
+    area: 0,
+    price: 0,
+    priceLabel: row.price ?? "Sur demande",
+    transaction,
+    type: "appartement",
+    verified: true,
+    image: row.image_url || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
+  };
+};
 
 const MAX_PRICE = 100_000_000;
 const ANY = "all";
@@ -45,19 +70,33 @@ const Annonces = () => {
   const f = useFilters();
   const [priceRange, setPriceRange] = useState<[number, number]>([f.minPrice, f.maxPrice]);
 
+  const [dbListings, setDbListings] = useState<Listing[]>([]);
+
   useEffect(() => {
     setPriceRange([f.minPrice, f.maxPrice]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("listings")
+        .select("id,title,type,location,price,image_url,created_at")
+        .order("created_at", { ascending: false });
+      setDbListings((data ?? []).map(mapDbListing));
+    })();
+  }, []);
+
+  const ALL_LISTINGS = useMemo(() => [...dbListings, ...STATIC_LISTINGS], [dbListings]);
+
   const results = useMemo(() => {
     const q = f.q.toLowerCase().trim();
-    let r = LISTINGS.filter((l) => {
+    let r = ALL_LISTINGS.filter((l) => {
       if (q && !`${l.title} ${l.city} ${l.wilaya}`.toLowerCase().includes(q)) return false;
       if (f.wilaya !== ANY && l.wilaya !== f.wilaya) return false;
       if (f.type !== ANY && l.type !== f.type) return false;
       if (f.transaction !== ANY && l.transaction !== f.transaction) return false;
-      if (l.price < f.minPrice || l.price > f.maxPrice) return false;
+      if (l.price && (l.price < f.minPrice || l.price > f.maxPrice)) return false;
       return true;
     });
     switch (f.sort) {
@@ -66,7 +105,7 @@ const Annonces = () => {
       case "area-desc": r = [...r].sort((a, b) => b.area - a.area); break;
     }
     return r;
-  }, [f.q, f.wilaya, f.type, f.transaction, f.minPrice, f.maxPrice, f.sort]);
+  }, [f.q, f.wilaya, f.type, f.transaction, f.minPrice, f.maxPrice, f.sort, ALL_LISTINGS]);
 
   const fmt = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
 

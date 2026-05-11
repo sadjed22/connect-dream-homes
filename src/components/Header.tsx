@@ -1,4 +1,4 @@
-import { Menu, X, ChevronDown, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User as UserIcon, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -87,6 +87,13 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/messages">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Mes messages
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                   <LogOut className="w-4 h-4 mr-2" />
                   Se déconnecter
