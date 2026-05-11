@@ -1,4 +1,5 @@
 import { MapPin, Maximize2, BadgeCheck, BedDouble } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { Listing } from "@/data/listings";
 
@@ -24,7 +25,9 @@ const ListingCard = ({ l }: { l: Listing }) => (
       </div>
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <span className="text-xl font-bold text-primary">{l.priceLabel}</span>
-        <Button size="sm" variant="outline" className="rounded-full">Voir</Button>
+        <Button size="sm" variant="outline" className="rounded-full" asChild>
+          <Link to={`/annonces/${l.id}`}>Voir</Link>
+        </Button>
       </div>
     </div>
   </article>
