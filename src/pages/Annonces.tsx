@@ -99,13 +99,6 @@ const Annonces = () => {
       if (l.price && (l.price < f.minPrice || l.price > f.maxPrice)) return false;
       return true;
     });
-      if (q && !`${l.title} ${l.city} ${l.wilaya}`.toLowerCase().includes(q)) return false;
-      if (f.wilaya !== ANY && l.wilaya !== f.wilaya) return false;
-      if (f.type !== ANY && l.type !== f.type) return false;
-      if (f.transaction !== ANY && l.transaction !== f.transaction) return false;
-      if (l.price < f.minPrice || l.price > f.maxPrice) return false;
-      return true;
-    });
     switch (f.sort) {
       case "price-asc": r = [...r].sort((a, b) => a.price - b.price); break;
       case "price-desc": r = [...r].sort((a, b) => b.price - a.price); break;
