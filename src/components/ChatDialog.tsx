@@ -40,7 +40,11 @@ const ChatDialog = ({ open, onOpenChange, listingId, listingTitle, recipientId }
         .eq("listing_id", listingId)
         .or(`and(sender_id.eq.${user.id},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${user.id})`)
         .order("created_at", { ascending: true });
-      setMessages((data as Message[]) ?? []);
+      const list = (data as Message[]) ?? [];
+      setMessages(list);
+      if (list.length === 0) {
+        setText(`Bonjour, je suis intéressé(e) par « ${listingTitle} ». Pouvez-vous me donner plus d'informations ?`);
+      }
     })();
 
     const channel = supabase
