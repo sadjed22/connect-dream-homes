@@ -360,11 +360,6 @@ const Explore = () => {
           recipientId={chatCtx.recipientId}
         />
       )}
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
