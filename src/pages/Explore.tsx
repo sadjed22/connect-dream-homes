@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, MapPin, BadgeCheck, User, Phone, Mail, X } from "lucide-react";
+import { Search, MapPin, BadgeCheck, User, ShieldCheck, Lock, MessageSquare, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import ChatDialog from "@/components/ChatDialog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
@@ -44,21 +48,24 @@ const Explore = () => {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<ExploreItem | null>(null);
   const [dbItems, setDbItems] = useState<ExploreItem[]>([]);
+  const [chatCtx, setChatCtx] = useState<{ listingId: string; listingTitle: string; recipientId: string } | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, email, phone, location, profile_type, created_at")
-        .in("profile_type", ["agent", "promoteur", "notaire"])
+      const { data, error } = await (supabase as any)
+        .from("public_directory")
+        .select("id, first_name, last_name, location, profile_type, created_at")
         .order("created_at", { ascending: false });
 
       if (error || !data || cancelled) return;
 
-      const mapped: ExploreItem[] = data.map((p) => {
+      const mapped: ExploreItem[] = (data as Array<{ id: string; first_name: string | null; last_name: string | null; location: string | null; profile_type: string | null; created_at: string }>).map((p) => {
         const cat = PROFILE_TYPE_TO_CATEGORY[p.profile_type ?? ""] ?? "agences";
-        const fullName = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.email || "Membre vérifié";
+        const fullName = [p.first_name, p.last_name].filter(Boolean).join(" ") || "Membre vérifié";
         return {
           id: `db-${p.id}`,
           category: cat,
@@ -68,7 +75,7 @@ const Explore = () => {
           meta: "Compte vérifié",
           badge: "Vérifié",
           image: PLACEHOLDER_IMG,
-          description: `${fullName} est inscrit·e sur ImmoMatch en tant que ${ROLE_LABEL[cat].toLowerCase()}. Contactez directement via les coordonnées ci-dessous.`,
+          description: `${fullName} est inscrit·e sur ImmoMatch en tant que ${ROLE_LABEL[cat].toLowerCase()}. Contactez via la messagerie sécurisée — les coordonnées personnelles restent privées.`,
           details: [
             { label: "Type de profil", value: ROLE_LABEL[cat] },
             { label: "Localisation", value: p.location || "—" },
@@ -78,9 +85,10 @@ const Explore = () => {
           author: {
             name: fullName,
             role: ROLE_LABEL[cat],
-            phone: p.phone || "—",
-            email: p.email || "—",
-          },
+            phone: "—",
+            email: "—",
+            userId: p.id,
+          } as ExploreItem["author"] & { userId: string },
         };
       });
 
@@ -88,6 +96,34 @@ const Explore = () => {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  const handleContact = async (item: ExploreItem) => {
+    const recipientId = (item.author as { userId?: string }).userId;
+    if (!recipientId) return;
+    if (!user) {
+      toast({ title: "Connexion requise", description: "Connectez-vous pour envoyer un message." });
+      navigate("/login?redirect=/explore");
+      return;
+    }
+    if (user.id === recipientId) {
+      toast({ title: "C'est votre profil", description: "Vous ne pouvez pas vous contacter vous-même." });
+      return;
+    }
+    // Find one of this author's listings to attach the conversation to
+    const { data } = await supabase
+      .from("listings")
+      .select("id,title")
+      .eq("user_id", recipientId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!data) {
+      toast({ title: "Aucune annonce active", description: "Cet annonceur n'a pas encore d'annonce. Réessayez plus tard." });
+      return;
+    }
+    setSelected(null);
+    setChatCtx({ listingId: data.id, listingTitle: data.title, recipientId });
+  };
 
   const setCat = (cat: string) => {
     const merged = new URLSearchParams(params);
@@ -282,24 +318,21 @@ const Explore = () => {
                 </div>
 
                 <div className="rounded-xl border border-border p-4 bg-muted/20">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    Auteur de l'offre
-                  </h4>
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <User className="w-6 h-6" />
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldCheck className="w-5 h-5 text-success" />
+                    <span className="font-semibold text-sm">Coordonnées masquées</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground inline-flex items-start gap-2">
+                    <Lock className="w-4 h-4 mt-0.5 shrink-0" />
+                    Pour votre sécurité, le nom complet, le numéro et l'email de l'annonceur restent privés. Échangez via la messagerie sécurisée.
+                  </p>
+                  <div className="flex items-center gap-3 mt-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold">{selected.author.name}</p>
-                      <p className="text-xs text-muted-foreground mb-2">{selected.author.role}</p>
-                      <div className="space-y-1 text-sm">
-                        <a href={`tel:${selected.author.phone}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary">
-                          <Phone className="w-4 h-4" /> {selected.author.phone}
-                        </a>
-                        <a href={`mailto:${selected.author.email}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary break-all">
-                          <Mail className="w-4 h-4" /> {selected.author.email}
-                        </a>
-                      </div>
+                    <div className="text-sm">
+                      <p className="font-semibold">Annonceur vérifié</p>
+                      <p className="text-xs text-muted-foreground">{selected.author.role}</p>
                     </div>
                   </div>
                 </div>
@@ -308,10 +341,8 @@ const Explore = () => {
                   <Button variant="outline" className="flex-1" onClick={() => setSelected(null)}>
                     <X className="w-4 h-4 mr-1" /> Fermer
                   </Button>
-                  <Button className="flex-1" asChild>
-                    <a href={`mailto:${selected.author.email}`}>
-                      <Mail className="w-4 h-4 mr-1" /> Contacter
-                    </a>
+                  <Button className="flex-1 gap-2" onClick={() => handleContact(selected)}>
+                    <MessageSquare className="w-4 h-4" /> Contacter
                   </Button>
                 </div>
               </div>
@@ -319,6 +350,16 @@ const Explore = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {chatCtx && (
+        <ChatDialog
+          open={!!chatCtx}
+          onOpenChange={(o) => !o && setChatCtx(null)}
+          listingId={chatCtx.listingId}
+          listingTitle={chatCtx.listingTitle}
+          recipientId={chatCtx.recipientId}
+        />
+      )}
     </div>
   );
 };
