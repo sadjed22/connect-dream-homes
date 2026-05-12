@@ -56,8 +56,8 @@ const Explore = () => {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data, error } = await supabase
-        .from("public_directory" as any)
+      const { data, error } = await (supabase as any)
+        .from("public_directory")
         .select("id, first_name, last_name, location, profile_type, created_at")
         .order("created_at", { ascending: false });
 
