@@ -93,9 +93,6 @@ const ChatDialog = ({ open, onOpenChange, listingId, listingTitle, recipientId }
             </DialogTitle>
             <p className="text-xs text-muted-foreground">Discussion sécurisée — coordonnées masquées</p>
           </div>
-          <button onClick={() => onOpenChange(false)} className="p-1 rounded hover:bg-muted">
-            <X className="w-4 h-4" />
-          </button>
         </div>
 
         <div ref={scrollRef} className="h-80 overflow-y-auto p-4 space-y-2 bg-muted/30">
