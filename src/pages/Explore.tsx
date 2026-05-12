@@ -48,21 +48,24 @@ const Explore = () => {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<ExploreItem | null>(null);
   const [dbItems, setDbItems] = useState<ExploreItem[]>([]);
+  const [chatCtx, setChatCtx] = useState<{ listingId: string; listingTitle: string; recipientId: string } | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name, email, phone, location, profile_type, created_at")
-        .in("profile_type", ["agent", "promoteur", "notaire"])
+        .from("public_directory" as any)
+        .select("id, first_name, last_name, location, profile_type, created_at")
         .order("created_at", { ascending: false });
 
       if (error || !data || cancelled) return;
 
-      const mapped: ExploreItem[] = data.map((p) => {
+      const mapped: ExploreItem[] = (data as Array<{ id: string; first_name: string | null; last_name: string | null; location: string | null; profile_type: string | null; created_at: string }>).map((p) => {
         const cat = PROFILE_TYPE_TO_CATEGORY[p.profile_type ?? ""] ?? "agences";
-        const fullName = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.email || "Membre vérifié";
+        const fullName = [p.first_name, p.last_name].filter(Boolean).join(" ") || "Membre vérifié";
         return {
           id: `db-${p.id}`,
           category: cat,
@@ -72,7 +75,7 @@ const Explore = () => {
           meta: "Compte vérifié",
           badge: "Vérifié",
           image: PLACEHOLDER_IMG,
-          description: `${fullName} est inscrit·e sur ImmoMatch en tant que ${ROLE_LABEL[cat].toLowerCase()}. Contactez directement via les coordonnées ci-dessous.`,
+          description: `${fullName} est inscrit·e sur ImmoMatch en tant que ${ROLE_LABEL[cat].toLowerCase()}. Contactez via la messagerie sécurisée — les coordonnées personnelles restent privées.`,
           details: [
             { label: "Type de profil", value: ROLE_LABEL[cat] },
             { label: "Localisation", value: p.location || "—" },
@@ -82,9 +85,10 @@ const Explore = () => {
           author: {
             name: fullName,
             role: ROLE_LABEL[cat],
-            phone: p.phone || "—",
-            email: p.email || "—",
-          },
+            phone: "—",
+            email: "—",
+            userId: p.id,
+          } as ExploreItem["author"] & { userId: string },
         };
       });
 
@@ -92,6 +96,34 @@ const Explore = () => {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  const handleContact = async (item: ExploreItem) => {
+    const recipientId = (item.author as { userId?: string }).userId;
+    if (!recipientId) return;
+    if (!user) {
+      toast({ title: "Connexion requise", description: "Connectez-vous pour envoyer un message." });
+      navigate("/login?redirect=/explore");
+      return;
+    }
+    if (user.id === recipientId) {
+      toast({ title: "C'est votre profil", description: "Vous ne pouvez pas vous contacter vous-même." });
+      return;
+    }
+    // Find one of this author's listings to attach the conversation to
+    const { data } = await supabase
+      .from("listings")
+      .select("id,title")
+      .eq("user_id", recipientId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!data) {
+      toast({ title: "Aucune annonce active", description: "Cet annonceur n'a pas encore d'annonce. Réessayez plus tard." });
+      return;
+    }
+    setSelected(null);
+    setChatCtx({ listingId: data.id, listingTitle: data.title, recipientId });
+  };
 
   const setCat = (cat: string) => {
     const merged = new URLSearchParams(params);
