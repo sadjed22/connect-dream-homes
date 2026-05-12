@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { CATEGORIES, EXPLORE_ITEMS, type ExploreCategory, type ExploreItem } from "@/data/explore";
+import { CATEGORIES, type ExploreCategory, type ExploreItem } from "@/data/explore";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
