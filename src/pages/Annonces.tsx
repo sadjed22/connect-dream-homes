@@ -87,7 +87,8 @@ const Annonces = () => {
     })();
   }, []);
 
-  const ALL_LISTINGS = useMemo(() => [...dbListings, ...STATIC_LISTINGS], [dbListings]);
+  // Only show real listings created by authenticated users (with verified authors)
+  const ALL_LISTINGS = useMemo(() => dbListings, [dbListings]);
 
   const results = useMemo(() => {
     const q = f.q.toLowerCase().trim();

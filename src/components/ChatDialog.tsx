@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Send, ShieldCheck, X } from "lucide-react";
+import { Send, ShieldCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,11 @@ const ChatDialog = ({ open, onOpenChange, listingId, listingTitle, recipientId }
         .eq("listing_id", listingId)
         .or(`and(sender_id.eq.${user.id},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${user.id})`)
         .order("created_at", { ascending: true });
-      setMessages((data as Message[]) ?? []);
+      const list = (data as Message[]) ?? [];
+      setMessages(list);
+      if (list.length === 0) {
+        setText(`Bonjour, je suis intéressé(e) par « ${listingTitle} ». Pouvez-vous me donner plus d'informations ?`);
+      }
     })();
 
     const channel = supabase
@@ -93,9 +97,6 @@ const ChatDialog = ({ open, onOpenChange, listingId, listingTitle, recipientId }
             </DialogTitle>
             <p className="text-xs text-muted-foreground">Discussion sécurisée — coordonnées masquées</p>
           </div>
-          <button onClick={() => onOpenChange(false)} className="p-1 rounded hover:bg-muted">
-            <X className="w-4 h-4" />
-          </button>
         </div>
 
         <div ref={scrollRef} className="h-80 overflow-y-auto p-4 space-y-2 bg-muted/30">
