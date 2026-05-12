@@ -318,24 +318,21 @@ const Explore = () => {
                 </div>
 
                 <div className="rounded-xl border border-border p-4 bg-muted/20">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    Auteur de l'offre
-                  </h4>
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <User className="w-6 h-6" />
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldCheck className="w-5 h-5 text-success" />
+                    <span className="font-semibold text-sm">Coordonnées masquées</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground inline-flex items-start gap-2">
+                    <Lock className="w-4 h-4 mt-0.5 shrink-0" />
+                    Pour votre sécurité, le nom complet, le numéro et l'email de l'annonceur restent privés. Échangez via la messagerie sécurisée.
+                  </p>
+                  <div className="flex items-center gap-3 mt-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <User className="w-5 h-5" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold">{selected.author.name}</p>
-                      <p className="text-xs text-muted-foreground mb-2">{selected.author.role}</p>
-                      <div className="space-y-1 text-sm">
-                        <a href={`tel:${selected.author.phone}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary">
-                          <Phone className="w-4 h-4" /> {selected.author.phone}
-                        </a>
-                        <a href={`mailto:${selected.author.email}`} className="flex items-center gap-2 text-foreground/80 hover:text-primary break-all">
-                          <Mail className="w-4 h-4" /> {selected.author.email}
-                        </a>
-                      </div>
+                    <div className="text-sm">
+                      <p className="font-semibold">Annonceur vérifié</p>
+                      <p className="text-xs text-muted-foreground">{selected.author.role}</p>
                     </div>
                   </div>
                 </div>
@@ -344,12 +341,25 @@ const Explore = () => {
                   <Button variant="outline" className="flex-1" onClick={() => setSelected(null)}>
                     <X className="w-4 h-4 mr-1" /> Fermer
                   </Button>
-                  <Button className="flex-1" asChild>
-                    <a href={`mailto:${selected.author.email}`}>
-                      <Mail className="w-4 h-4 mr-1" /> Contacter
-                    </a>
+                  <Button className="flex-1 gap-2" onClick={() => handleContact(selected)}>
+                    <MessageSquare className="w-4 h-4" /> Contacter
                   </Button>
                 </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {chatCtx && (
+        <ChatDialog
+          open={!!chatCtx}
+          onOpenChange={(o) => !o && setChatCtx(null)}
+          listingId={chatCtx.listingId}
+          listingTitle={chatCtx.listingTitle}
+          recipientId={chatCtx.recipientId}
+        />
+      )}
               </div>
             </>
           )}
