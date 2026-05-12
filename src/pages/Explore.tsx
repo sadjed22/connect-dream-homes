@@ -94,11 +94,56 @@ const Explore = () => {
 
       setDbItems(mapped);
     })();
+
+    // Fetch real listings (vendre/louer) so acheter/louer cards are messageable
+    (async () => {
+      const { data: listings } = await supabase
+        .from("listings")
+        .select("id,title,description,location,price,image_url,type,user_id,created_at")
+        .in("type", ["vendre", "louer"])
+        .order("created_at", { ascending: false });
+      if (!listings || cancelled) return;
+
+      const listingItems: ExploreItem[] = listings.map((l) => {
+        const cat: ExploreCategory = l.type === "louer" ? "louer" : "acheter";
+        return {
+          id: `lst-${l.id}`,
+          category: cat,
+          title: l.title,
+          subtitle: cat === "louer" ? "À louer" : "À vendre",
+          location: l.location || "Algérie",
+          meta: l.price || "Sur demande",
+          price: l.price || undefined,
+          badge: "Vérifié",
+          image: l.image_url || PLACEHOLDER_IMG,
+          description: l.description || `${l.title} — contactez l'annonceur via la messagerie sécurisée.`,
+          details: [
+            { label: "Type", value: cat === "louer" ? "Location" : "Vente" },
+            { label: "Localisation", value: l.location || "—" },
+            { label: "Prix", value: l.price || "Sur demande" },
+            { label: "Publié", value: new Date(l.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" }) },
+          ],
+          author: {
+            name: "Annonceur vérifié",
+            role: cat === "louer" ? "Bailleur" : "Vendeur",
+            phone: "—",
+            email: "—",
+            userId: l.user_id,
+            listingId: l.id,
+            listingTitle: l.title,
+          } as ExploreItem["author"] & { userId: string; listingId: string; listingTitle: string },
+        };
+      });
+
+      setDbItems((prev) => [...prev, ...listingItems]);
+    })();
+
     return () => { cancelled = true; };
   }, []);
 
   const handleContact = async (item: ExploreItem) => {
-    const recipientId = (item.author as { userId?: string }).userId;
+    const author = item.author as { userId?: string; listingId?: string; listingTitle?: string };
+    const recipientId = author.userId;
     if (!recipientId) return;
     if (!user) {
       toast({ title: "Connexion requise", description: "Connectez-vous pour envoyer un message." });
@@ -106,10 +151,16 @@ const Explore = () => {
       return;
     }
     if (user.id === recipientId) {
-      toast({ title: "C'est votre profil", description: "Vous ne pouvez pas vous contacter vous-même." });
+      toast({ title: "C'est votre annonce", description: "Vous ne pouvez pas vous contacter vous-même." });
       return;
     }
-    // Find one of this author's listings to attach the conversation to
+    // If the item is a listing itself, use it directly
+    if (author.listingId && author.listingTitle) {
+      setSelected(null);
+      setChatCtx({ listingId: author.listingId, listingTitle: author.listingTitle, recipientId });
+      return;
+    }
+    // Otherwise (directory profile) attach to one of the author's listings
     const { data } = await supabase
       .from("listings")
       .select("id,title")
