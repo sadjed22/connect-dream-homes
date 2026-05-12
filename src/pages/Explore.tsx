@@ -185,13 +185,7 @@ const Explore = () => {
 
   const items = useMemo(() => {
     const search = q.toLowerCase().trim();
-    // Real DB profiles take precedence for agences/promoteurs/notaires;
-    // static items are kept for acheter/louer.
-    const staticFiltered = EXPLORE_ITEMS.filter(
-      (i) => i.category === "acheter" || i.category === "louer"
-    );
-    const all = [...dbItems, ...staticFiltered];
-    return all.filter((i) => {
+    return dbItems.filter((i) => {
       if (active !== ALL && i.category !== active) return false;
       if (search && !`${i.title} ${i.subtitle} ${i.location}`.toLowerCase().includes(search)) return false;
       return true;
