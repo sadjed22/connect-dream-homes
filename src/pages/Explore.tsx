@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { CATEGORIES, type ExploreCategory, type ExploreItem } from "@/data/explore";
+import { CATEGORIES, EXPLORE_ITEMS, type ExploreCategory, type ExploreItem } from "@/data/explore";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -41,13 +41,17 @@ const PLACEHOLDER_IMG =
   );
 
 const ALL = "all";
+const PROFESSIONAL_CATEGORIES: ExploreCategory[] = ["agences", "promoteurs", "notaires"];
 
 const Explore = () => {
   const [params, setParams] = useSearchParams();
   const active = (params.get("cat") || ALL) as ExploreCategory | "all";
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState<ExploreItem | null>(null);
-  const [dbItems, setDbItems] = useState<ExploreItem[]>([]);
+  const [listingItems, setListingItems] = useState<ExploreItem[]>([]);
+  const [directoryItems, setDirectoryItems] = useState<ExploreItem[]>(() =>
+    EXPLORE_ITEMS.filter((item) => PROFESSIONAL_CATEGORIES.includes(item.category))
+  );
   const [chatCtx, setChatCtx] = useState<{ listingId: string; listingTitle: string; recipientId: string } | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -55,13 +59,19 @@ const Explore = () => {
 
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       const { data, error } = await (supabase as any)
         .from("public_directory")
         .select("id, first_name, last_name, location, profile_type, created_at")
         .order("created_at", { ascending: false });
 
-      if (error || !data || cancelled) return;
+      if (error || cancelled) return;
+
+      if (!data?.length) {
+        setDirectoryItems(EXPLORE_ITEMS.filter((item) => PROFESSIONAL_CATEGORIES.includes(item.category)));
+        return;
+      }
 
       const mapped: ExploreItem[] = (data as Array<{ id: string; first_name: string | null; last_name: string | null; location: string | null; profile_type: string | null; created_at: string }>).map((p) => {
         const cat = PROFILE_TYPE_TO_CATEGORY[p.profile_type ?? ""] ?? "agences";
@@ -92,17 +102,16 @@ const Explore = () => {
         };
       });
 
-      setDbItems(mapped);
+      setDirectoryItems(mapped);
     })();
 
-    // Fetch real listings (vendre/louer) so acheter/louer cards are messageable
     (async () => {
-      const { data: listings } = await supabase
+      const { data: listings, error } = await supabase
         .from("listings")
         .select("id,title,description,location,price,image_url,type,user_id,created_at")
         .in("type", ["vendre", "louer"])
         .order("created_at", { ascending: false });
-      if (!listings || cancelled) return;
+      if (error || cancelled || !listings) return;
 
       const listingItems: ExploreItem[] = listings.map((l) => {
         const cat: ExploreCategory = l.type === "louer" ? "louer" : "acheter";
@@ -135,7 +144,7 @@ const Explore = () => {
         };
       });
 
-      setDbItems((prev) => [...prev, ...listingItems]);
+      setListingItems(listingItems);
     })();
 
     return () => { cancelled = true; };
@@ -185,12 +194,12 @@ const Explore = () => {
 
   const items = useMemo(() => {
     const search = q.toLowerCase().trim();
-    return dbItems.filter((i) => {
+    return [...listingItems, ...directoryItems].filter((i) => {
       if (active !== ALL && i.category !== active) return false;
       if (search && !`${i.title} ${i.subtitle} ${i.location}`.toLowerCase().includes(search)) return false;
       return true;
     });
-  }, [active, q, dbItems]);
+  }, [active, q, listingItems, directoryItems]);
 
   const activeLabel = active === ALL ? "Toutes les offres" : CATEGORIES.find((c) => c.value === active)?.label;
 
