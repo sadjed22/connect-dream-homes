@@ -1,0 +1,10 @@
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80' WHERE id = '3951ea80-d3ed-4c08-be8d-ab583bb3be93';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80' WHERE id = '3b1c4ea7-957f-4a3d-b003-d765b4ef2c53';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80' WHERE id = 'f076dbd6-8880-4b5f-b93d-bc7d36d386bf';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80' WHERE id = '5207c87d-3b3b-4263-9cc0-ff633030d67d';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80' WHERE id = '4c89e2da-6b44-468a-8919-d8bce0596c23';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80' WHERE id = '459aac4a-406c-4610-90df-768802478890';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1577415124269-fc1140a69e91?w=1200&q=80' WHERE id = 'd495e4d4-a1aa-400b-b653-b60472c81c70';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80' WHERE id = 'f628236d-6e8c-4421-8f90-e2711e23ddf1';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80' WHERE id = '1ce546d9-fc63-4978-afe7-2e816c7bd896';
+UPDATE public.listings SET image_url = 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200&q=80' WHERE id = '27005e15-829a-4f82-bc23-62481c499785';
