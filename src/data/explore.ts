@@ -254,4 +254,42 @@ export const EXPLORE_ITEMS: ExploreItem[] = [
     ],
     author: { name: "El Hadi Construction", role: "Promoteur immobilier", phone: "+213 34 55 66 77", email: "elhadi@construction.dz" },
   },
+
+  // ===== Notaires =====
+  {
+    id: "nt1", category: "notaires", title: "Mohamed Boudjelida", subtitle: "Notaire",
+    location: "Alger Centre", meta: "Actes & transactions", badge: "Vérifié", image: "/placeholder.svg",
+    description: "Étude notariale accompagnant les ventes, acquisitions et formalités immobilières en toute confidentialité.",
+    details: [
+      { label: "Spécialité", value: "Transactions immobilières" },
+      { label: "Localisation", value: "Alger Centre" },
+      { label: "Services", value: "Actes, certifications, successions" },
+      { label: "Disponibilité", value: "Sur rendez-vous" },
+    ],
+    author: { name: "Mohamed Boudjelida", role: "Notaire", phone: "+213 21 00 11 22", email: "contact@etudeboudjelida.dz" },
+  },
+  {
+    id: "nt2", category: "notaires", title: "Amel Cherif", subtitle: "Notaire",
+    location: "Oran", meta: "Ventes & authentification", badge: "Vérifié", image: "/placeholder.svg",
+    description: "Étude notariale à Oran pour sécuriser vos ventes, achats et démarches administratives liées à l'immobilier.",
+    details: [
+      { label: "Spécialité", value: "Vente et acquisition" },
+      { label: "Localisation", value: "Oran" },
+      { label: "Services", value: "Authentification, procurations" },
+      { label: "Disponibilité", value: "Lun. à jeu." },
+    ],
+    author: { name: "Amel Cherif", role: "Notaire", phone: "+213 41 00 11 22", email: "contact@etudecherif.dz" },
+  },
+  {
+    id: "nt3", category: "notaires", title: "Rachid Benhamida", subtitle: "Notaire",
+    location: "Constantine", meta: "Accompagnement juridique", badge: "Vérifié", image: "/placeholder.svg",
+    description: "Conseil notarial pour promesses de vente, actes définitifs et formalités d'enregistrement à Constantine.",
+    details: [
+      { label: "Spécialité", value: "Actes de vente" },
+      { label: "Localisation", value: "Constantine" },
+      { label: "Services", value: "Vérification, enregistrement" },
+      { label: "Disponibilité", value: "Du dimanche au jeudi" },
+    ],
+    author: { name: "Rachid Benhamida", role: "Notaire", phone: "+213 31 00 11 22", email: "contact@etudebenhamida.dz" },
+  },
 ];
