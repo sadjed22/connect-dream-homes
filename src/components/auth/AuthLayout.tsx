@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.jpg";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
