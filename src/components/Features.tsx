@@ -1,4 +1,4 @@
-import { ShieldCheck, Sparkles, BadgeCheck, FileCheck2, UserCheck, Brain } from "lucide-react";
+import { ShieldCheck, Sparkles, BadgeCheck, FileCheck2 } from "lucide-react";
 
 const items = [
   { icon: ShieldCheck, title: "Vérification des utilisateurs", desc: "Identité et documents vérifiés pour chaque utilisateur de la plateforme." },
