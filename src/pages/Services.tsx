@@ -43,6 +43,8 @@ const Services = () => (
           </Button>
         </div>
       </section>
+
+      <Pricing />
     </main>
     <Footer />
   </div>
