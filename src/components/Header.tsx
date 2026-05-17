@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 const links = [
   { label: "Accueil", to: "/" },
   { label: "Services", to: "/services" },
+  { label: "Tarifs", to: "/tarifs" },
   { label: "Contact", to: "/contact" },
 ];
 
