@@ -10,6 +10,7 @@ import Explore from "./pages/Explore.tsx";
 import Login from "./pages/Login.tsx";
 import Signup from "./pages/Signup.tsx";
 import Services from "./pages/Services.tsx";
+import Tarifs from "./pages/Tarifs.tsx";
 import Contact from "./pages/Contact.tsx";
 import About from "./pages/About.tsx";
 import CreateListing from "./pages/CreateListing.tsx";
