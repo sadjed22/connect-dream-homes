@@ -1,12 +1,10 @@
-import { ShieldCheck, Sparkles, BadgeCheck, FileCheck2, UserCheck, Brain } from "lucide-react";
+import { ShieldCheck, Sparkles, BadgeCheck, FileCheck2 } from "lucide-react";
 
 const items = [
   { icon: ShieldCheck, title: "Vérification des utilisateurs", desc: "Identité et documents vérifiés pour chaque utilisateur de la plateforme." },
   { icon: Sparkles, title: "Matching intelligent", desc: "Notre algorithme connecte acheteurs et vendeurs selon leurs critères précis." },
   { icon: BadgeCheck, title: "Annonces vérifiées", desc: "Chaque annonce est contrôlée pour garantir authenticité et exactitude." },
   { icon: FileCheck2, title: "Vérification notariale", desc: "Documents légaux vérifiés par des notaires partenaires agréés." },
-  { icon: UserCheck, title: "Conseillers certifiés", desc: "Des agents immobiliers qualifiés et certifiés à votre service." },
-  { icon: Brain, title: "Recommandations IA", desc: "Suggestions personnalisées basées sur vos préférences et historique." },
 ];
 
 const Features = () => (
