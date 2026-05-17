@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ShieldCheck, Sparkles, BadgeCheck, FileCheck2, UserCheck, Brain, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Pricing from "@/components/Pricing";
 import { Button } from "@/components/ui/button";
 
 const services = [
@@ -43,8 +42,6 @@ const Services = () => (
           </Button>
         </div>
       </section>
-
-      <Pricing />
     </main>
     <Footer />
   </div>
