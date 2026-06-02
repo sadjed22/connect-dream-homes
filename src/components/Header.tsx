@@ -1,4 +1,4 @@
-import { Menu, X, ChevronDown, LogOut, User as UserIcon, MessageSquare } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User as UserIcon, MessageSquare, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const links = [
 
 const Header = () => {
   const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -94,6 +94,14 @@ const Header = () => {
                     Mes messages
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to="/admin">
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Tableau de bord
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                   <LogOut className="w-4 h-4 mr-2" />
