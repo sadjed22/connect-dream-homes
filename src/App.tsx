@@ -17,6 +17,7 @@ import CreateListing from "./pages/CreateListing.tsx";
 import ListingDetail from "./pages/ListingDetail.tsx";
 import Messages from "./pages/Messages.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Admin from "./pages/Admin.tsx";
 import AddListingFab from "./components/AddListingFab";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/annonces/nouvelle" element={<CreateListing />} />
             <Route path="/annonces/:id" element={<ListingDetail />} />
             <Route path="/messages" element={<Messages />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
