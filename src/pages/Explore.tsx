@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, MapPin, BadgeCheck, User, ShieldCheck, Lock, MessageSquare, X } from "lucide-react";
+import { Search, MapPin, BadgeCheck, User, ShieldCheck, Lock, MessageSquare, X, Scale } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -276,14 +276,22 @@ const Explore = () => {
                   style={{ boxShadow: "var(--shadow-card)" }}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={i.image}
-                      alt={i.title}
-                      loading="lazy"
-                      width={768}
-                      height={576}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {i.category === "notaires" ? (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Scale className="w-8 h-8 text-primary" />
+                        </div>
+                      </div>
+                    ) : (
+                      <img
+                        src={i.image}
+                        alt={i.title}
+                        loading="lazy"
+                        width={768}
+                        height={576}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
                     <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground capitalize">
                       {CATEGORIES.find((c) => c.value === i.category)?.label}
                     </span>
@@ -327,11 +335,19 @@ const Explore = () => {
           {selected && (
             <>
               <div className="relative aspect-[16/9] bg-muted">
-                <img
-                  src={selected.image}
-                  alt={selected.title}
-                  className="w-full h-full object-cover"
-                />
+                {selected.category === "notaires" ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Scale className="w-10 h-10 text-primary" />
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={selected.image}
+                    alt={selected.title}
+                    className="w-full h-full object-cover"
+                  />
+                )}
                 <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
                   {CATEGORIES.find((c) => c.value === selected.category)?.label}
                 </span>
