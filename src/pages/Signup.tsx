@@ -151,12 +151,13 @@ const Signup = () => {
       }
     }
 
+    await supabase.auth.signOut();
     setLoading(false);
     toast({
-      title: "Compte créé avec succès",
-      description: "Bienvenue sur ImmoMatch !",
+      title: "Compte créé — en attente de validation",
+      description: "Un administrateur doit approuver votre compte avant que vous puissiez vous connecter.",
     });
-    navigate("/");
+    navigate("/login");
   };
 
   return (

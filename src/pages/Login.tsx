@@ -23,10 +23,10 @@ const Login = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
+      setLoading(false);
       toast({
         title: "Échec de la connexion",
         description: error.message === "Invalid login credentials"
@@ -37,6 +37,39 @@ const Login = () => {
       return;
     }
 
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (!roleRow) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("status")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (profile?.status !== "approved") {
+          await supabase.auth.signOut();
+          setLoading(false);
+          toast({
+            title: "Compte en attente de validation",
+            description:
+              profile?.status === "denied"
+                ? "Votre compte a été refusé par l'administrateur."
+                : "Votre compte doit être approuvé par un administrateur avant de pouvoir vous connecter.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+    }
+
+    setLoading(false);
     toast({ title: "Connexion réussie", description: "Bienvenue sur ImmoMatch." });
     navigate(redirectTo);
   };
