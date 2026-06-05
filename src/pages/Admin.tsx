@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Check, X, FileText, Loader2, Mail, Phone, MapPin } from "lucide-react";
+import { Check, X, FileText, Loader2, Mail, Phone, MapPin, Trash2 } from "lucide-react";
 
 interface Profile {
   id: string;
