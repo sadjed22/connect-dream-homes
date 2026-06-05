@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { isPendingSignupSessionActive } from "@/lib/auth";
 
 interface AuthContextValue {
   user: User | null;
@@ -24,39 +25,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const resolveAccess = async (nextSession: Session | null) => {
+    if (!nextSession?.user) {
+      setSession(null);
+      setUser(null);
+      setIsAdmin(false);
+      setLoading(false);
+      return;
+    }
+
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", nextSession.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleRow) {
+      setSession(nextSession);
+      setUser(nextSession.user);
+      setIsAdmin(true);
+      setLoading(false);
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("status")
+      .eq("id", nextSession.user.id)
+      .maybeSingle();
+
+    if (profile?.status === "approved" && !isPendingSignupSessionActive()) {
+      setSession(nextSession);
+      setUser(nextSession.user);
+      setIsAdmin(false);
+      setLoading(false);
+      return;
+    }
+
+    setSession(null);
+    setUser(null);
+    setIsAdmin(false);
+    setLoading(false);
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      if (newSession?.user) {
-        // Defer to avoid deadlock inside the callback
-        setTimeout(async () => {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", newSession.user.id)
-            .eq("role", "admin")
-            .maybeSingle();
-          setIsAdmin(!!data);
-        }, 0);
-      } else {
-        setIsAdmin(false);
-      }
+      setLoading(true);
+      // Defer to avoid deadlock inside the callback
+      setTimeout(() => {
+        void resolveAccess(newSession);
+      }, 0);
     });
 
     supabase.auth.getSession().then(async ({ data: { session: existing } }) => {
-      setSession(existing);
-      setUser(existing?.user ?? null);
-      if (existing?.user) {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", existing.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-        setIsAdmin(!!data);
-      }
-      setLoading(false);
+      await resolveAccess(existing);
     });
 
     return () => subscription.unsubscribe();

@@ -23,6 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { PENDING_SIGNUP_SESSION_KEY } from "@/lib/auth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Stepper from "@/components/auth/Stepper";
 
@@ -104,6 +105,7 @@ const Signup = () => {
     }
 
     setLoading(true);
+    sessionStorage.setItem(PENDING_SIGNUP_SESSION_KEY, "true");
 
     const redirectUrl = `${window.location.origin}/`;
     const { data, error } = await supabase.auth.signUp({
@@ -122,6 +124,7 @@ const Signup = () => {
     });
 
     if (error) {
+      sessionStorage.removeItem(PENDING_SIGNUP_SESSION_KEY);
       setLoading(false);
       toast({
         title: "Échec de l'inscription",
@@ -152,6 +155,7 @@ const Signup = () => {
     }
 
     await supabase.auth.signOut();
+    sessionStorage.removeItem(PENDING_SIGNUP_SESSION_KEY);
     setLoading(false);
     toast({
       title: "Compte créé — en attente de validation",
