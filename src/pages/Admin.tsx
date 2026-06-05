@@ -49,6 +49,9 @@ const Admin = () => {
   const [docs, setDocs] = useState<Record<string, DocFile[]>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
+  const [deletingListing, setDeletingListing] = useState<string | null>(null);
 
   const loadProfiles = async () => {
     setFetching(true);
