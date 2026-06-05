@@ -83,8 +83,38 @@ const Admin = () => {
     setDocs((prev) => ({ ...prev, [userId]: files }));
   };
 
+  const loadListings = async () => {
+    setListingsLoading(true);
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Erreur de chargement", description: error.message, variant: "destructive" });
+    } else {
+      setListings(data as Listing[]);
+    }
+    setListingsLoading(false);
+  };
+
+  const deleteListing = async (id: string) => {
+    if (!confirm("Supprimer cette annonce ?")) return;
+    setDeletingListing(id);
+    const { error } = await supabase.from("listings").delete().eq("id", id);
+    setDeletingListing(null);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Annonce supprimée" });
+      setListings((prev) => prev.filter((l) => l.id !== id));
+    }
+  };
+
   useEffect(() => {
-    if (isAdmin) loadProfiles();
+    if (isAdmin) {
+      loadProfiles();
+      loadListings();
+    }
   }, [isAdmin]);
 
   useEffect(() => {
