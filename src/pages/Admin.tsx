@@ -255,10 +255,57 @@ const Admin = () => {
             <TabsTrigger value="pending">En attente ({pending.length})</TabsTrigger>
             <TabsTrigger value="approved">Approuvés ({approved.length})</TabsTrigger>
             <TabsTrigger value="denied">Refusés ({denied.length})</TabsTrigger>
+            <TabsTrigger value="listings">Annonces ({listings.length})</TabsTrigger>
           </TabsList>
           <TabsContent value="pending">{renderList(pending)}</TabsContent>
           <TabsContent value="approved">{renderList(approved)}</TabsContent>
           <TabsContent value="denied">{renderList(denied)}</TabsContent>
+          <TabsContent value="listings">
+            {listingsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : listings.length === 0 ? (
+              <p className="text-center text-muted-foreground py-12">Aucune annonce</p>
+            ) : (
+              <div className="space-y-4">
+                {listings.map((l) => (
+                  <Card key={l.id} className="border-border/60">
+                    <CardContent className="flex items-center gap-4 p-4">
+                      {l.image_url ? (
+                        <img
+                          src={l.image_url}
+                          alt={l.title}
+                          className="w-20 h-20 rounded-md object-cover bg-muted"
+                        />
+                      ) : (
+                        <div className="w-20 h-20 rounded-md bg-muted" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-medium truncate">{l.title}</p>
+                          <Badge variant="outline" className="capitalize">
+                            {l.type}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {l.location ?? "—"} · {l.price ?? "—"}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => deleteListing(l.id)}
+                        disabled={deletingListing === l.id}
+                      >
+                        <Trash2 className="w-4 h-4" /> Supprimer
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
       </main>
       <Footer />
