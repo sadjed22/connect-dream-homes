@@ -28,6 +28,17 @@ interface DocFile {
   url: string;
 }
 
+interface Listing {
+  id: string;
+  title: string;
+  type: string;
+  location: string | null;
+  price: string | null;
+  image_url: string | null;
+  created_at: string;
+  user_id: string;
+}
+
 const statusVariant = (s: string) =>
   s === "approved" ? "default" : s === "denied" ? "destructive" : "secondary";
 
