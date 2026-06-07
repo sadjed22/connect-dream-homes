@@ -5,12 +5,16 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Document, Page, pdfjs } from "react-pdf";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { Check, X, FileText, Loader2, Mail, Phone, MapPin, Trash2 } from "lucide-react";
+
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface Profile {
   id: string;
@@ -60,6 +64,8 @@ const Admin = () => {
   const [listingsLoading, setListingsLoading] = useState(true);
   const [deletingListing, setDeletingListing] = useState<string | null>(null);
   const [previewDoc, setPreviewDoc] = useState<PreviewDoc | null>(null);
+  const [previewPages, setPreviewPages] = useState<number>(0);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const loadProfiles = async () => {
     setFetching(true);
@@ -105,6 +111,8 @@ const Admin = () => {
   };
 
   const openDoc = async (url: string, name: string) => {
+    setPreviewPages(0);
+    setPreviewError(null);
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error("fetch_failed");
@@ -355,21 +363,81 @@ const Admin = () => {
             if (!open && previewDoc?.url.startsWith("blob:")) {
               URL.revokeObjectURL(previewDoc.url);
             }
-            if (!open) setPreviewDoc(null);
+            if (!open) {
+              setPreviewDoc(null);
+              setPreviewPages(0);
+              setPreviewError(null);
+            }
           }}
         >
           <DialogContent className="max-w-5xl h-[85vh] p-0 overflow-hidden gap-0">
             <DialogHeader className="px-6 pt-6 pb-2 border-b border-border/60">
               <DialogTitle className="truncate pr-8">{previewDoc?.name}</DialogTitle>
+              <DialogDescription>
+                Prévisualisation du document soumis avant validation.
+              </DialogDescription>
             </DialogHeader>
 
-            <div className="flex-1 min-h-0 bg-muted/20 p-4">
+            <div className="flex-1 min-h-0 overflow-y-auto bg-muted/20 p-4">
               {previewDoc?.type === "application/pdf" ? (
-                <iframe
-                  src={previewDoc.url}
-                  title={previewDoc.name}
-                  className="w-full h-full min-h-[65vh] rounded-md border border-border bg-background"
-                />
+                <div className="min-h-[65vh] rounded-md border border-border bg-background p-4">
+                  {previewError ? (
+                    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+                      <p className="text-sm text-muted-foreground">{previewError}</p>
+                      <Button asChild>
+                        <a href={previewDoc.url} target="_blank" rel="noreferrer">
+                          Ouvrir le PDF dans un nouvel onglet
+                        </a>
+                      </Button>
+                    </div>
+                  ) : (
+                    <Document
+                      file={previewDoc.url}
+                      loading={
+                        <div className="flex min-h-[60vh] items-center justify-center">
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        </div>
+                      }
+                      onLoadSuccess={({ numPages }) => {
+                        setPreviewPages(numPages);
+                        setPreviewError(null);
+                      }}
+                      onLoadError={() => {
+                        setPreviewError("Impossible d'afficher ce PDF dans la fenêtre. Vous pouvez l'ouvrir dans un nouvel onglet.");
+                      }}
+                      error={
+                        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+                          <p className="text-sm text-muted-foreground">
+                            Impossible d'afficher ce PDF dans la fenêtre. Vous pouvez l'ouvrir dans un nouvel onglet.
+                          </p>
+                          <Button asChild>
+                            <a href={previewDoc.url} target="_blank" rel="noreferrer">
+                              Ouvrir le PDF dans un nouvel onglet
+                            </a>
+                          </Button>
+                        </div>
+                      }
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        {Array.from({ length: previewPages }, (_, index) => (
+                          <Page
+                            key={`page_${index + 1}`}
+                            pageNumber={index + 1}
+                            width={900}
+                            renderAnnotationLayer={false}
+                            renderTextLayer={false}
+                            className="max-w-full overflow-hidden rounded-md border border-border bg-background shadow-sm"
+                            loading={
+                              <div className="flex h-[420px] w-full items-center justify-center">
+                                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                              </div>
+                            }
+                          />
+                        ))}
+                      </div>
+                    </Document>
+                  )}
+                </div>
               ) : previewDoc?.type.startsWith("image/") ? (
                 <div className="w-full h-full min-h-[65vh] flex items-center justify-center">
                   <img
