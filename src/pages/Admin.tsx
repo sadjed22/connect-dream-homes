@@ -250,7 +250,7 @@ const Admin = () => {
                       >
                         <FileText className="w-4 h-4 text-primary" />
                         {f.name}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 ) : (
