@@ -242,11 +242,10 @@ const Admin = () => {
                 {docs[p.id]?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {docs[p.id].map((f) => (
-                      <a
+                      <button
                         key={f.name}
-                        href={f.url}
-                        target="_blank"
-                        rel="noreferrer"
+                        type="button"
+                        onClick={() => openDoc(f.url, f.name)}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border bg-muted/40 text-sm hover:bg-muted transition-colors"
                       >
                         <FileText className="w-4 h-4 text-primary" />
