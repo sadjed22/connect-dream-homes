@@ -83,6 +83,32 @@ const Admin = () => {
     setDocs((prev) => ({ ...prev, [userId]: files }));
   };
 
+  const mimeFromName = (name: string) => {
+    const ext = name.split(".").pop()?.toLowerCase();
+    switch (ext) {
+      case "pdf": return "application/pdf";
+      case "png": return "image/png";
+      case "jpg":
+      case "jpeg": return "image/jpeg";
+      case "webp": return "image/webp";
+      case "gif": return "image/gif";
+      default: return "application/octet-stream";
+    }
+  };
+
+  const openDoc = async (url: string, name: string) => {
+    try {
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const blob = new Blob([buf], { type: mimeFromName(name) });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+    } catch (e) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   const loadListings = async () => {
     setListingsLoading(true);
     const { data, error } = await supabase
@@ -216,16 +242,15 @@ const Admin = () => {
                 {docs[p.id]?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {docs[p.id].map((f) => (
-                      <a
+                      <button
                         key={f.name}
-                        href={f.url}
-                        target="_blank"
-                        rel="noreferrer"
+                        type="button"
+                        onClick={() => openDoc(f.url, f.name)}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border bg-muted/40 text-sm hover:bg-muted transition-colors"
                       >
                         <FileText className="w-4 h-4 text-primary" />
                         {f.name}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 ) : (

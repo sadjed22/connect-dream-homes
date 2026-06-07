@@ -147,7 +147,10 @@ const Signup = () => {
         const path = `${userId}/${doc.id}.${ext}`;
         const { error: upErr } = await supabase.storage
           .from("kyc-documents")
-          .upload(path, file, { upsert: true });
+          .upload(path, file, {
+            upsert: true,
+            contentType: file.type || undefined,
+          });
         if (upErr) {
           console.error("Upload error", doc.id, upErr);
         }
