@@ -83,6 +83,32 @@ const Admin = () => {
     setDocs((prev) => ({ ...prev, [userId]: files }));
   };
 
+  const mimeFromName = (name: string) => {
+    const ext = name.split(".").pop()?.toLowerCase();
+    switch (ext) {
+      case "pdf": return "application/pdf";
+      case "png": return "image/png";
+      case "jpg":
+      case "jpeg": return "image/jpeg";
+      case "webp": return "image/webp";
+      case "gif": return "image/gif";
+      default: return "application/octet-stream";
+    }
+  };
+
+  const openDoc = async (url: string, name: string) => {
+    try {
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const blob = new Blob([buf], { type: mimeFromName(name) });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+    } catch (e) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   const loadListings = async () => {
     setListingsLoading(true);
     const { data, error } = await supabase
