@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +40,12 @@ interface Listing {
   user_id: string;
 }
 
+interface PreviewDoc {
+  name: string;
+  url: string;
+  type: string;
+}
+
 const statusVariant = (s: string) =>
   s === "approved" ? "default" : s === "denied" ? "destructive" : "secondary";
 
@@ -52,6 +59,7 @@ const Admin = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const [deletingListing, setDeletingListing] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<PreviewDoc | null>(null);
 
   const loadProfiles = async () => {
     setFetching(true);
@@ -99,15 +107,23 @@ const Admin = () => {
   const openDoc = async (url: string, name: string) => {
     try {
       const res = await fetch(url);
+      if (!res.ok) throw new Error("fetch_failed");
       const buf = await res.arrayBuffer();
       const blob = new Blob([buf], { type: mimeFromName(name) });
       const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank", "noopener,noreferrer");
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+      setPreviewDoc({ name, url: blobUrl, type: mimeFromName(name) });
     } catch (e) {
-      window.open(url, "_blank", "noopener,noreferrer");
+      setPreviewDoc({ name, url, type: mimeFromName(name) });
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewDoc?.url.startsWith("blob:")) {
+        URL.revokeObjectURL(previewDoc.url);
+      }
+    };
+  }, [previewDoc]);
 
   const loadListings = async () => {
     setListingsLoading(true);
@@ -332,6 +348,48 @@ const Admin = () => {
             )}
           </TabsContent>
         </Tabs>
+
+        <Dialog
+          open={!!previewDoc}
+          onOpenChange={(open) => {
+            if (!open && previewDoc?.url.startsWith("blob:")) {
+              URL.revokeObjectURL(previewDoc.url);
+            }
+            if (!open) setPreviewDoc(null);
+          }}
+        >
+          <DialogContent className="max-w-5xl h-[85vh] p-0 overflow-hidden gap-0">
+            <DialogHeader className="px-6 pt-6 pb-2 border-b border-border/60">
+              <DialogTitle className="truncate pr-8">{previewDoc?.name}</DialogTitle>
+            </DialogHeader>
+
+            <div className="flex-1 min-h-0 bg-muted/20 p-4">
+              {previewDoc?.type === "application/pdf" ? (
+                <iframe
+                  src={previewDoc.url}
+                  title={previewDoc.name}
+                  className="w-full h-full min-h-[65vh] rounded-md border border-border bg-background"
+                />
+              ) : previewDoc?.type.startsWith("image/") ? (
+                <div className="w-full h-full min-h-[65vh] flex items-center justify-center">
+                  <img
+                    src={previewDoc.url}
+                    alt={previewDoc.name}
+                    className="max-w-full max-h-full object-contain rounded-md border border-border bg-background"
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full min-h-[65vh] flex items-center justify-center">
+                  <Button asChild>
+                    <a href={previewDoc?.url} target="_blank" rel="noreferrer">
+                      Ouvrir le document
+                    </a>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
       <Footer />
     </div>
