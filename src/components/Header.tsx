@@ -151,11 +151,27 @@ const Header = () => {
                 <Link to={l.to} onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg hover:bg-muted">{l.label}</Link>
               </li>
             ))}
-            <li className="pt-2 flex gap-2">
+            <li className="pt-2 flex flex-col gap-2">
               {user ? (
-                <Button variant="outline" className="flex-1" onClick={() => { setOpen(false); handleSignOut(); }}>
-                  <LogOut className="w-4 h-4" /> Déconnexion
-                </Button>
+                <>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/messages" onClick={() => setOpen(false)}>
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Mes messages
+                    </Link>
+                  </Button>
+                  {isAdmin && (
+                    <Button variant="outline" className="w-full justify-start" asChild>
+                      <Link to="/admin" onClick={() => setOpen(false)}>
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Tableau de bord
+                      </Link>
+                    </Button>
+                  )}
+                  <Button variant="outline" className="flex-1" onClick={() => { setOpen(false); handleSignOut(); }}>
+                    <LogOut className="w-4 h-4" /> Déconnexion
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button variant="outline" className="flex-1" asChild><Link to="/login" onClick={() => setOpen(false)}>Se connecter</Link></Button>
